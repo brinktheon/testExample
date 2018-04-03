@@ -28,7 +28,7 @@ namespace Example
             }
             catch (SqlException e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine(e.ToString());
             }
         }
 
@@ -40,7 +40,7 @@ namespace Example
             }
             catch (SqlException e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine(e.ToString());
             }
         }
 
@@ -61,7 +61,7 @@ namespace Example
             }
             catch (SqlException e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine(e.ToString());
             }
             finally
             {
