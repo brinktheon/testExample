@@ -1,7 +1,0 @@
-D:\VSProject\Example\Example\bin\Debug\Example.exe.config
-D:\VSProject\Example\Example\bin\Debug\Example.exe
-D:\VSProject\Example\Example\bin\Debug\Example.pdb
-D:\VSProject\Example\Example\obj\Debug\Example.csprojResolveAssemblyReference.cache
-D:\VSProject\Example\Example\obj\Debug\Example.csproj.CoreCompileInputs.cache
-D:\VSProject\Example\Example\obj\Debug\Example.exe
-D:\VSProject\Example\Example\obj\Debug\Example.pdb
