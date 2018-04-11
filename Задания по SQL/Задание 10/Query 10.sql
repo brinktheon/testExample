@@ -12,5 +12,5 @@ from Products p
 		on s.id = ws.Store_Id
 
 WHERE 
-			p.Name Like '%Фисташка%' AND
-			s.Name Like 'Мир пустоты';
+			p.Name = 'Фисташка' AND
+			s.Name = 'Мир пустоты';
