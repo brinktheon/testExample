@@ -5,12 +5,12 @@ using System.Data.SqlClient;
 
 namespace Example
 {
-    abstract class BaseRepository<T> where T : class
+    abstract class BaseRepository<T>
     {
-        private SqlConnection connection = null;
-        private SqlCommand cmd;
-        private SqlDataReader reader;
-        private string stringConnection;
+        protected SqlConnection connection = null;
+        protected SqlCommand cmd;
+        protected SqlDataReader reader;
+        protected string stringConnection;
 
         public BaseRepository(string stringConnection)
         {
@@ -44,7 +44,7 @@ namespace Example
             }
         }
 
-        public List<T> Load(string sql)
+        public virtual List<T> Load(string sql)
         {
             OpenConnection(stringConnection);
 
@@ -63,11 +63,6 @@ namespace Example
             {
                 Console.WriteLine(e.ToString());
             }
-	    catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            
             finally
             {
                 reader.Close();
@@ -77,6 +72,5 @@ namespace Example
         }
 
         public abstract T Serialize(SqlDataReader reader);
-
     }
 }
