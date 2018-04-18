@@ -21,24 +21,21 @@ namespace Example
             switch ((int)reader["EntityID"])
             {
                 case 1:
-                    localCar = new Car((int)reader["Weight"]);
+                    localCar = new Car((int)reader["id"], (int)reader["Weight"]);
                     break;
                 case 2:
-                    localCar = new PassengerCar((int)reader["Weight"], (int)reader["Seating"]);
+                    localCar = new PassengerCar((int)reader["id"], (int)reader["Weight"], (int)reader["Seating"]);
                     break;
                 case 3:
-                    localCar = new TruckCar((int)reader["Weight"], (int)reader["LiftingWeight"]);
+                    localCar = new TruckCar((int)reader["id"], (int)reader["Weight"], (int)reader["LiftingWeight"]);
                     break;
                 case 4:
-                    localCar = new SportCar((int)reader["Weight"], (int)reader["Seating"], (string)reader["Model"]);
+                    localCar = new SportCar((int)reader["id"], (int)reader["Weight"], (int)reader["Seating"], (string)reader["Model"]);
                     break;
                 case 5:
-                    localCar =  new Tipper((int)reader["Weight"], (int)reader["LiftingWeight"], (string)reader["Model"]);
+                    localCar = new Tipper((int)reader["id"], (int)reader["Weight"], (int)reader["LiftingWeight"], (string)reader["Model"]);
                     break;
             }
-
-            LocalCache.Add(Convert.ToInt32(reader["id"]), localCar);
-
             return localCar;
         }
 

@@ -16,9 +16,10 @@ namespace Example
             this.Type = CarType.Auto;
         }
 
-        public Car(int Weight)
+        public Car(int Id, int Weight)
         {
             this.Weight = Weight;
+            this.Id = Id;
         }
 
         public virtual string GetInfo()

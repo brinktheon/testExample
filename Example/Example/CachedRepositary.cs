@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Example
 {
-    abstract class  CachedRepositary<T> : BaseRepository<T> where T : IIntegerKey
+    abstract class CachedRepositary<T> : BaseRepository<T> where T : IIntegerKey
     {
         protected static IDictionary<int, T> LocalCache = new Dictionary<int, T>();
         private string sql;
@@ -18,62 +18,27 @@ namespace Example
 
         public T LoadById(int id)
         {
-            T loaclCar = default(T);
             sql = "SELECT * FROM AutoConfig WHERE AutoConfig.id = " + id + ";";
 
-            if (!Find(id))
+            if (!LocalCache.TryGetValue(id, out T loaclCar))
             {
-                OpenConnection(stringConnection);
-                try
-                {
-                    cmd = new SqlCommand(sql, connection);
-                    reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        loaclCar = Serialize(reader);
-                    }
-                }
-                catch (SqlException e)
-                {
-                    Console.WriteLine(e.ToString());
-                }
-                finally
-                {
-                    reader.Close();
-                    CloseConnection();
-                }
+                loaclCar = base.Load(sql)[0];
             }
-            loaclCar = LocalCache[id];
-
             return loaclCar;
         }
 
-        public List<T> LoadFromCacheByLinq()
+        public IList<T> LoadFromCacheByLinq(Func<T, bool> predicate)
         {
-            var val = LocalCache.Select(value => value.Value);
-
-
-            return val.ToList<T>();
+            return LocalCache.Select(value => value.Value).Where(predicate).ToList();
         }
 
         public override List<T> Load(string sql)
         {
-            return base.Load(sql);
-        }
-
-        private bool Find(int id)
-        {
-            IEnumerable<int> keys = LocalCache.Keys;
-
-            foreach (int value in keys)
+            foreach (T value in base.Load(sql))
             {
-                if (value == id)
-                {
-                    return true;
-                }
+                LocalCache.Add(value.Id, value);
             }
-
-            return false;
+            return base.Load(sql);
         }
     }
 }
