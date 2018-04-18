@@ -42,9 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CachedRepositary.cs" />
     <Compile Include="Car.cs" />
     <Compile Include="BaseRepository.cs" />
     <Compile Include="CarRepository.cs" />
+    <Compile Include="IIntegerKey.cs" />
+    <Compile Include="RealizeCacheRepository.cs" />
     <Compile Include="Tipper.cs" />
     <Compile Include="CarType.cs" />
     <Compile Include="SportCar.cs" />
