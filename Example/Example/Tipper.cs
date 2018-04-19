@@ -15,10 +15,10 @@ namespace Example
 
         public Tipper()
         {
-            this.Type = CarType.Special; 
+            this.Type = CarType.Special;
         }
 
-        public Tipper(int Weight, int LiftingWeight, string Model) : base(Weight, LiftingWeight)
+        public Tipper(int Id, int Weight, int LiftingWeight, string Model) : base(Id, Weight, LiftingWeight)
         {
             this.Model = Model;
         }
