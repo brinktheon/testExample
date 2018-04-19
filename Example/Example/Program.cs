@@ -24,6 +24,8 @@ namespace Example
 
             listCar = repositary.Load("Select * from AutoConfig;");
 
+            var listCar3 = repositary.Load("Select * from AutoConfig;");
+
             var listCar1 = repositary.LoadFromCacheByLinq(item => item.Id > 3);
 
             foreach (var car in listCar1)

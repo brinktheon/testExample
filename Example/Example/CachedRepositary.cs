@@ -29,14 +29,14 @@ namespace Example
 
         public IList<T> LoadFromCacheByLinq(Func<T, bool> predicate)
         {
-            return LocalCache.Select(value => value.Value).Where(predicate).ToList();
+            return LocalCache.Values.Where(predicate).ToList();
         }
 
         public override List<T> Load(string sql)
         {
             foreach (T value in base.Load(sql))
             {
-                LocalCache.Add(value.Id, value);
+                LocalCache[value.Id] = value;
             }
             return base.Load(sql);
         }
