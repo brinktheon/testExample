@@ -2,15 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Reflection;
 
 namespace Example
 {
-    abstract class BaseRepository<T> where T : class
+    abstract class BaseRepository<T>
     {
-        private SqlConnection connection = null;
-        private SqlCommand cmd;
-        private SqlDataReader reader;
-        private string stringConnection;
+        protected SqlConnection connection = null;
+        protected SqlCommand cmd;
+        protected SqlDataReader reader;
+        protected string stringConnection;
 
         public BaseRepository(string stringConnection)
         {
@@ -44,7 +46,7 @@ namespace Example
             }
         }
 
-        public List<T> Load(string sql)
+        public virtual List<T> Load(string sql)
         {
             OpenConnection(stringConnection);
 
@@ -63,11 +65,6 @@ namespace Example
             {
                 Console.WriteLine(e.ToString());
             }
-	    catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            
             finally
             {
                 reader.Close();
@@ -76,7 +73,44 @@ namespace Example
             return localListObjects;
         }
 
-        public abstract T Serialize(SqlDataReader reader);
+        public T Serialize(SqlDataReader reader)
+        {
+            T localCar = default(T);
 
+            var subclassTypes = Assembly
+           .GetAssembly(typeof(T))
+           .GetTypes()
+           .Where(t => t.IsSubclassOf(typeof(T)));
+
+            switch ((int)reader["EntityID"])
+            {
+                case 1:
+                    localCar = (T)typeof(T).GetConstructor(new[] { typeof(int), typeof(int) })
+                                .Invoke(new object[] { (int)reader["id"], (int)reader["Weight"] });
+                    break;
+                case 2:
+                    localCar = (T)subclassTypes.Where(q => q.Name.Equals("PassengerCar")).Single()
+                                .GetConstructor(new[] { typeof(int), typeof(int), typeof(int) })
+                                .Invoke(new object[] { (int)reader["id"], (int)reader["Weight"], (int)reader["Seating"] });
+                    break;
+                case 3:
+                    localCar = (T)subclassTypes.Where(q => q.Name.Equals("TruckCar")).Single()
+                                .GetConstructor(new[] { typeof(int), typeof(int), typeof(int) })
+                                .Invoke(new object[] { (int)reader["id"], (int)reader["Weight"], (int)reader["LiftingWeight"] });
+                    break;
+                case 4:
+                    localCar = (T)subclassTypes.Where(q => q.Name.Equals("SportCar")).Single()
+                                .GetConstructor(new[] { typeof(int), typeof(int), typeof(int), typeof(string) })
+                                .Invoke(new object[] { (int)reader["id"], (int)reader["Weight"], (int)reader["Seating"], (string)reader["Model"] });
+                    break;
+                case 5:
+                    localCar = (T)subclassTypes.Where(q => q.Name.Equals("Tipper")).Single()
+                                .GetConstructor(new[] { typeof(int), typeof(int), typeof(int), typeof(string) })
+                                .Invoke(new object[] { (int)reader["id"], (int)reader["Weight"], (int)reader["Seating"], (string)reader["Model"] });
+                    break;
+            }
+
+            return localCar;
+        }
     }
 }

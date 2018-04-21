@@ -15,7 +15,7 @@ namespace Example
             this.Type = CarType.PassengerTransport;
         }
 
-        public PassengerCar(int Weight, int Seating) : base(Weight)
+        public PassengerCar(int Id, int Weight, int Seating) : base(Id, Weight)
         {
             this.Seating = Seating;
         }

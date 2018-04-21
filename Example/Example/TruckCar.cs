@@ -7,14 +7,14 @@ namespace Example
     {
         public int LiftingWeight { get; set; }
 
-        public CarType Type { get; set; } 
+        public CarType Type { get; set; }
 
         public TruckCar()
         {
-            this.Type =  CarType.FreightTransport;
+            this.Type = CarType.FreightTransport;
         }
 
-        public TruckCar(int Weight, int LiftingWeight) : base(Weight)
+        public TruckCar(int Id, int Weight, int LiftingWeight) : base(Id, Weight)
         {
             this.LiftingWeight = LiftingWeight;
         }
