@@ -9,7 +9,8 @@ namespace Example
 
         public CarType Type { get; set; }
 
-        public int Id { get; }
+        //Добавил set; для считывания из бд Id
+        public int Id { get; set; }
 
         public Car()
         {

@@ -12,9 +12,7 @@ namespace Example
         protected static IDictionary<int, T> LocalCache = new Dictionary<int, T>();
         private string sql;
 
-        public CachedRepositary(string stringConnection) : base(stringConnection) { }
-
-        public abstract override T Serialize(SqlDataReader reader);
+        public CachedRepositary(string stringConnection) : base(stringConnection) { }        
 
         public T LoadById(int id)
         {
