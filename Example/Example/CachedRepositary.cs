@@ -16,7 +16,7 @@ namespace Example
 
         public T LoadById(int id)
         {
-            sql = "SELECT * FROM AutoConfig WHERE AutoConfig.id = " + id + ";";
+            sql = "select * from AutoConfig ac inner join AutoType at on ac.CarTypeId = at.id and  ac.Id = " + id + "; ";        
 
             if (!LocalCache.TryGetValue(id, out T loaclCar))
             {
