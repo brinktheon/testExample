@@ -14,30 +14,33 @@ namespace Example
 
         }
 
-        public override Car Serialize(SqlDataReader reader, Type type)
-        {
-            Car localCar = base.Serialize(reader, type);
+        //public override Car Serialize(SqlDataReader reader)
+        //{
+        //    return base.Serialize(reader);
+        //}
 
-            switch ((int)localCar.Type)
+        public override Car CarEntity(SqlDataReader reader)
+        {
+            Car local = null;
+            switch (reader["CarTypeId"])
             {
                 case 1:
-                    localCar = base.Serialize(reader, typeof(Car));
+                    local = new Car();
                     break;
                 case 2:
-                    localCar = base.Serialize(reader, typeof(PassengerCar));
+                    local = new PassengerCar();
                     break;
                 case 3:
-                    localCar = base.Serialize(reader, typeof(TruckCar));
+                    local = new TruckCar();
                     break;
                 case 4:
-                    localCar = base.Serialize(reader, typeof(SportCar));
+                    local = new SportCar();
                     break;
                 case 5:
-                    localCar = base.Serialize(reader, typeof(Tipper));
+                    local = new Tipper();
                     break;
             }
-
-            return localCar;
+            return local;
         }
     }
 }

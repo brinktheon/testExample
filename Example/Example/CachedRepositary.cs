@@ -14,9 +14,9 @@ namespace Example
 
         public CachedRepositary(string stringConnection) : base(stringConnection) { }
 
-        public override T Serialize(SqlDataReader reader, Type type)
+        public override T Serialize(SqlDataReader reader)
         {
-            return base.Serialize(reader, type);
+            return base.Serialize(reader);
         }
 
         public T LoadById(int id)

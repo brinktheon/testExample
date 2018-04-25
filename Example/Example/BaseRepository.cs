@@ -58,7 +58,7 @@ namespace Example
 
                 while (reader.Read())
                 {
-                    localListObjects.Add(Serialize(reader, typeof(T)));
+                    localListObjects.Add(Serialize(reader));
                 }
             }
             catch (SqlException e)
@@ -73,11 +73,11 @@ namespace Example
             return localListObjects;
         }
 
-        public virtual T Serialize(SqlDataReader reader, Type type)
+        public virtual T Serialize(SqlDataReader reader)
         {
             var results = default(T);
 
-            var item = (T)Activator.CreateInstance(type);
+            var item = CarEntity(reader);
             foreach (var property in item.GetType().GetProperties())
             {
                 if (!reader.IsDBNull(reader.GetOrdinal(property.Name)))
@@ -94,6 +94,11 @@ namespace Example
             results = item;
 
             return results;
+        }
+
+        public virtual T CarEntity(SqlDataReader reader)
+        {
+            return default(T);
         }
     }
 }

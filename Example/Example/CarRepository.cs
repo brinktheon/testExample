@@ -13,7 +13,7 @@ namespace Example
         {
         }
 
-        public override Car Serialize(SqlDataReader reader, Type type)
+        public override Car Serialize(SqlDataReader reader)
         {
             throw new NotImplementedException();
         }
