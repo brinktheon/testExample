@@ -11,6 +11,11 @@ namespace Example
     {
         public CarRepository(string stringConnection) : base(stringConnection)
         {
-        }      
+        }
+
+        public override Car Serialize(SqlDataReader reader, Type type)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

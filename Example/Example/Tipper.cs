@@ -15,7 +15,7 @@ namespace Example
 
         public Tipper()
         {
-            this.Type = CarType.Special;
+            this.Type = CarType.Tipper;
         }
 
         public Tipper(int Id, int Weight, int LiftingWeight, string Model) : base(Id, Weight, LiftingWeight)

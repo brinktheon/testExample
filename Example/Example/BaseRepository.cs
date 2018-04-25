@@ -58,7 +58,7 @@ namespace Example
 
                 while (reader.Read())
                 {
-                    localListObjects.Add(Serialize(reader));
+                    localListObjects.Add(Serialize(reader, typeof(T)));
                 }
             }
             catch (SqlException e)
@@ -73,25 +73,27 @@ namespace Example
             return localListObjects;
         }
 
-        public T Serialize(SqlDataReader reader)
-        {          
-            Type t = Type.GetType($"{typeof(T).Namespace}.{reader["CarType"].ToString()}");
-            T localObj = (T)Activator.CreateInstance(t);
-          
-            var columsnName = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToList();                
-            var props = t.GetProperties();               
-                for (int i = 0; i < props.Length; i++)
+        public virtual T Serialize(SqlDataReader reader, Type type)
+        {
+            var results = default(T);
+
+            var item = (T)Activator.CreateInstance(type);
+            foreach (var property in item.GetType().GetProperties())
+            {
+                if (!reader.IsDBNull(reader.GetOrdinal(property.Name)))
                 {
-                    for (int j = 0; j < columsnName.Count; j++)
+                    Type convertTo = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                    if (convertTo.IsEnum)
                     {
-                        if (props[i].Name.Equals(columsnName[j]))
-                        {
-                            var propertyInfo = localObj.GetType().GetProperty(props[i].Name);
-                            propertyInfo.SetValue(localObj, Convert.ChangeType(reader[columsnName[j]], propertyInfo.PropertyType), null);
-                        }
+                        property.SetValue(item, (Enum.Parse(convertTo, reader[property.Name].ToString())), null);
                     }
-                }   
-            return localObj;
+                    else
+                        property.SetValue(item, Convert.ChangeType(reader[property.Name], convertTo), null);
+                }
+            }
+            results = item;
+
+            return results;
         }
     }
 }

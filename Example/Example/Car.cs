@@ -14,7 +14,7 @@ namespace Example
 
         public Car()
         {
-            this.Type = CarType.Auto;
+            this.Type = CarType.Car;
         }
 
         public Car(int Id, int Weight)

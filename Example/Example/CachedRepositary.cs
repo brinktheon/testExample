@@ -12,11 +12,16 @@ namespace Example
         protected static IDictionary<int, T> LocalCache = new Dictionary<int, T>();
         private string sql;
 
-        public CachedRepositary(string stringConnection) : base(stringConnection) { }        
+        public CachedRepositary(string stringConnection) : base(stringConnection) { }
+
+        public override T Serialize(SqlDataReader reader, Type type)
+        {
+            return base.Serialize(reader, type);
+        }
 
         public T LoadById(int id)
         {
-            sql = "select * from AutoConfig ac inner join AutoType at on ac.CarTypeId = at.id and  ac.Id = " + id + "; ";        
+            sql = "select * from AutoConfig ac inner join AutoType at on ac.CarTypeId = at.id and  ac.Id = " + id + "; ";
 
             if (!LocalCache.TryGetValue(id, out T loaclCar))
             {
