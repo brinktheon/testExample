@@ -7,17 +7,12 @@ using System.Threading.Tasks;
 
 namespace Example
 {
-    abstract class CachedRepositary<T> : BaseRepository<T> where T : IIntegerKey
+    abstract class CachedRepositary<T> : BaseRepository<T> where T : IIntegerKey, new()
     {
         protected static IDictionary<int, T> LocalCache = new Dictionary<int, T>();
         private string sql;
 
         public CachedRepositary(string stringConnection) : base(stringConnection) { }
-
-        public override T Serialize(SqlDataReader reader)
-        {
-            return base.Serialize(reader);
-        }
 
         public T LoadById(int id)
         {

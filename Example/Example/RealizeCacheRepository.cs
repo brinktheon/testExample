@@ -13,13 +13,8 @@ namespace Example
         {
 
         }
-
-        //public override Car Serialize(SqlDataReader reader)
-        //{
-        //    return base.Serialize(reader);
-        //}
-
-        public override Car CarEntity(SqlDataReader reader)
+   
+        public override Car TypeOfEntity(SqlDataReader reader)
         {
             Car local = null;
             switch (reader["CarTypeId"])

@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Example
 {
-    abstract class BaseRepository<T>
+    abstract class BaseRepository<T> where T : new()
     {
         protected SqlConnection connection = null;
         protected SqlCommand cmd;
@@ -18,6 +18,8 @@ namespace Example
         {
             this.stringConnection = stringConnection;
         }
+
+        public BaseRepository() { }
 
         public void OpenConnection(string stringConnection)
         {
@@ -77,7 +79,7 @@ namespace Example
         {
             var results = default(T);
 
-            var item = CarEntity(reader);
+            var item = TypeOfEntity(reader);
             foreach (var property in item.GetType().GetProperties())
             {
                 if (!reader.IsDBNull(reader.GetOrdinal(property.Name)))
@@ -96,9 +98,9 @@ namespace Example
             return results;
         }
 
-        public virtual T CarEntity(SqlDataReader reader)
+        public virtual T TypeOfEntity(SqlDataReader reader)
         {
-            return default(T);
+            return new T();
         }
     }
 }
