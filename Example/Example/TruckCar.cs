@@ -11,7 +11,7 @@ namespace Example
 
         public TruckCar()
         {
-            this.Type = CarType.FreightTransport;
+            this.Type = CarType.TruckCar;
         }
 
         public TruckCar(int Id, int Weight, int LiftingWeight) : base(Id, Weight)

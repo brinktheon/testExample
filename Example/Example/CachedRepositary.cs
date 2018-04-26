@@ -7,18 +7,16 @@ using System.Threading.Tasks;
 
 namespace Example
 {
-    abstract class CachedRepositary<T> : BaseRepository<T> where T : IIntegerKey
+    abstract class CachedRepositary<T> : BaseRepository<T> where T : IIntegerKey, new()
     {
         protected static IDictionary<int, T> LocalCache = new Dictionary<int, T>();
         private string sql;
 
         public CachedRepositary(string stringConnection) : base(stringConnection) { }
 
-        public abstract override T Serialize(SqlDataReader reader);
-
         public T LoadById(int id)
         {
-            sql = "SELECT * FROM AutoConfig WHERE AutoConfig.id = " + id + ";";
+            sql = "select * from AutoConfig ac inner join AutoType at on ac.CarTypeId = at.id and  ac.Id = " + id + "; ";
 
             if (!LocalCache.TryGetValue(id, out T loaclCar))
             {

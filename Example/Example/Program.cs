@@ -12,19 +12,20 @@ namespace Example
         {
 
             var listCar = new List<Car>();
+            string query = "select * from AutoConfig ac inner join AutoType at on ac.CarTypeId = at.id";
             RealizeCacheRepository repositary = new RealizeCacheRepository(@"Data Source=.\SQLEXPRESS;Initial Catalog=AutoDB;Integrated Security=True");
 
             //var car1 = repositary.LoadById(3);
 
             //var car2 = repositary.LoadById(3);
 
-            //var car3 = repositary.LoadById(1);
+            //var car3 = repositary.LoadById(4);
 
-            //Console.WriteLine(car2.GetInfo());
+            //Console.WriteLine(car3.GetInfo());
 
-            listCar = repositary.Load("Select * from AutoConfig;");
+            listCar = repositary.Load(query);
 
-            var listCar3 = repositary.Load("Select * from AutoConfig;");
+            var listCar3 = repositary.Load(query);
 
             var listCar1 = repositary.LoadFromCacheByLinq(item => item.Id > 3);
 

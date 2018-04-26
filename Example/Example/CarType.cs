@@ -8,10 +8,10 @@ namespace Example
 {
     enum CarType
     {
-        Auto = 1,
-        PassengerTransport = 2,
-        FreightTransport = 3,
-        Sport = 4,
-        Special = 5
+        Car = 1,
+        PassengerCar = 2,
+        TruckCar = 3,
+        SportCar = 4,
+        Tipper = 5
     }
 }

@@ -13,32 +13,29 @@ namespace Example
         {
 
         }
-
-        public override Car Serialize(SqlDataReader reader)
+   
+        public override Car TypeOfEntity(SqlDataReader reader)
         {
-            Car localCar = null;
-
-            switch ((int)reader["EntityID"])
+            Car local = null;
+            switch (reader["CarTypeId"])
             {
                 case 1:
-                    localCar = new Car((int)reader["id"], (int)reader["Weight"]);
+                    local = new Car();
                     break;
                 case 2:
-                    localCar = new PassengerCar((int)reader["id"], (int)reader["Weight"], (int)reader["Seating"]);
+                    local = new PassengerCar();
                     break;
                 case 3:
-                    localCar = new TruckCar((int)reader["id"], (int)reader["Weight"], (int)reader["LiftingWeight"]);
+                    local = new TruckCar();
                     break;
                 case 4:
-                    localCar = new SportCar((int)reader["id"], (int)reader["Weight"], (int)reader["Seating"], (string)reader["Model"]);
+                    local = new SportCar();
                     break;
                 case 5:
-                    localCar = new Tipper((int)reader["id"], (int)reader["Weight"], (int)reader["LiftingWeight"], (string)reader["Model"]);
+                    local = new Tipper();
                     break;
             }
-            return localCar;
+            return local;
         }
-
-
     }
 }

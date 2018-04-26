@@ -12,7 +12,7 @@ namespace Example
 
         public SportCar()
         {
-            this.Type = CarType.Sport;
+            this.Type = CarType.SportCar;
         }
 
         public SportCar(int Id, int Weight, int Seating, string Model) : base(Id, Weight, Seating)

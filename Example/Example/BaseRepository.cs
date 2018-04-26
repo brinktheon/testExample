@@ -2,10 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Reflection;
 
 namespace Example
 {
-    abstract class BaseRepository<T>
+    abstract class BaseRepository<T> where T : new()
     {
         protected SqlConnection connection = null;
         protected SqlCommand cmd;
@@ -16,6 +18,8 @@ namespace Example
         {
             this.stringConnection = stringConnection;
         }
+
+        public BaseRepository() { }
 
         public void OpenConnection(string stringConnection)
         {
@@ -71,6 +75,32 @@ namespace Example
             return localListObjects;
         }
 
-        public abstract T Serialize(SqlDataReader reader);
+        public virtual T Serialize(SqlDataReader reader)
+        {
+            var results = default(T);
+
+            var item = TypeOfEntity(reader);
+            foreach (var property in item.GetType().GetProperties())
+            {
+                if (!reader.IsDBNull(reader.GetOrdinal(property.Name)))
+                {
+                    Type convertTo = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                    if (convertTo.IsEnum)
+                    {
+                        property.SetValue(item, (Enum.Parse(convertTo, reader[property.Name].ToString())), null);
+                    }
+                    else
+                        property.SetValue(item, Convert.ChangeType(reader[property.Name], convertTo), null);
+                }
+            }
+            results = item;
+
+            return results;
+        }
+
+        public virtual T TypeOfEntity(SqlDataReader reader)
+        {
+            return new T();
+        }
     }
 }

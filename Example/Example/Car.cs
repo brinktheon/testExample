@@ -9,11 +9,12 @@ namespace Example
 
         public CarType Type { get; set; }
 
-        public int Id { get; }
+        //Добавил set; для считывания из бд Id
+        public int Id { get; set; }
 
         public Car()
         {
-            this.Type = CarType.Auto;
+            this.Type = CarType.Car;
         }
 
         public Car(int Id, int Weight)
