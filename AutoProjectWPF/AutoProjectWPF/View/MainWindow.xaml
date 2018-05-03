@@ -5,8 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AutoProjectWPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="430" 
-        DataContext="{StaticResource Main}">
+        Title="MainWindow" Height="450" Width="430">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />

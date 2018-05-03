@@ -15,21 +15,21 @@ namespace AutoProjectWPF.ViewModel.Repositories
 
         public override CarType TypeOfEntity(SqlDataReader reader)
         {
-            switch (reader["CarTypeId"])
+            switch (reader["Type"])
             {
-                case 1:
+                case "Car":
                     local = CarType.Car;
                     break;
-                case 2:
+                case "PassengerCar":
                     local = CarType.PassengerCar;
                     break;
-                case 3:
+                case "TruckCar":
                     local = CarType.TruckCar;
                     break;
-                case 4:
+                case "SportCar":
                     local = CarType.SportCar;
                     break;
-                case 5:
+                case "Tipper":
                     local = CarType.Tipper;
                     break;
             }

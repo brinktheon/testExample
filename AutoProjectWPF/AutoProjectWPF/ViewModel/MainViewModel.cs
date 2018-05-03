@@ -7,7 +7,8 @@ namespace AutoProjectWPF.ViewModel
 {
     class MainViewModel : BaseViewModel
     {
-        private string query = "select * from AutoConfig ac inner join AutoType at on ac.CarTypeId = at.id";
+        private string autoQuery = "select * from AutoConfig ac inner join AutoType at on ac.CarTypeId = at.id";
+        private string typeQuery = "select at.Type from AutoConfig ac inner join AutoType at on ac.CarTypeId = at.id";
         RealizeCacheRepository realize;
         RepoOfType types;
 
@@ -18,7 +19,7 @@ namespace AutoProjectWPF.ViewModel
             set
             {
                 carCollection = value;
-                OnPropertyChange("CarCollection");
+                OnPropertyChange();
             }
         }
 
@@ -30,7 +31,7 @@ namespace AutoProjectWPF.ViewModel
             set
             {
                 carTypeCollection = value;
-                OnPropertyChange("CarTypeCollection");
+                OnPropertyChange();
             }
         }
 
@@ -38,8 +39,8 @@ namespace AutoProjectWPF.ViewModel
         {
             realize = new RealizeCacheRepository(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
             types = new RepoOfType(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            CarCollection = new ObservableCollection<Car>(realize.Load(query));            
-            CarTypeCollection = new ObservableCollection<CarType>(types.Load(query));
+            CarCollection = new ObservableCollection<Car>(realize.Load(autoQuery));
+            CarTypeCollection = new ObservableCollection<CarType>(types.Load(typeQuery));
         }
 
         private Car selectedCar;
@@ -49,7 +50,7 @@ namespace AutoProjectWPF.ViewModel
             set
             {
                 selectedCar = value;
-                OnPropertyChange("SelectedCar");
+                OnPropertyChange();
             }
         }
 
@@ -67,7 +68,7 @@ namespace AutoProjectWPF.ViewModel
                     (createItem = new ActionViewModel(obj =>
                     {
                         var car = new Car();
-                        carCollection.Insert(carCollection.Count, car);
+                        carCollection.Add(car);
                         SelectedCar = car;
                     }));
             }
@@ -108,31 +109,5 @@ namespace AutoProjectWPF.ViewModel
                     }));
             }
         }
-
-        // Метод сделан для создание объекта по типу из combobox
-        private Car ReturnCarByType(CarType carType)
-        {
-            Car local = null;
-            switch (carType)
-            {
-                case CarType.Car:
-                    local = new Car();
-                    break;
-                case CarType.PassengerCar:
-                    local = new PassengerCar();
-                    break;
-                case CarType.TruckCar:
-                    local = new TruckCar();
-                    break;
-                case CarType.SportCar:
-                    local = new SportCar();
-                    break;
-                case CarType.Tipper:
-                    local = new Tipper();
-                    break;
-            }
-            return local;
-        }
-
     }
 }
