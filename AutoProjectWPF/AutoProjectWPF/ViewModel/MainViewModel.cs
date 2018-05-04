@@ -2,15 +2,14 @@
 using Model;
 using System.Collections.ObjectModel;
 using System.Configuration;
+using System.Linq;
 
 namespace AutoProjectWPF.ViewModel
 {
     class MainViewModel : BaseViewModel
     {
         private string autoQuery = "select * from AutoConfig ac inner join AutoType at on ac.CarTypeId = at.id";
-        private string typeQuery = "select at.Type from AutoConfig ac inner join AutoType at on ac.CarTypeId = at.id";
         RealizeCacheRepository realize;
-        RepoOfType types;
 
         private ObservableCollection<Car> carCollection;
         public ObservableCollection<Car> CarCollection
@@ -22,7 +21,6 @@ namespace AutoProjectWPF.ViewModel
                 OnPropertyChange();
             }
         }
-
 
         private ObservableCollection<CarType> carTypeCollection;
         public ObservableCollection<CarType> CarTypeCollection
@@ -37,10 +35,9 @@ namespace AutoProjectWPF.ViewModel
 
         public MainViewModel()
         {
-            realize = new RealizeCacheRepository(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            types = new RepoOfType(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+            realize = new RealizeCacheRepository(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString); 
             CarCollection = new ObservableCollection<Car>(realize.Load(autoQuery));
-            CarTypeCollection = new ObservableCollection<CarType>(types.Load(typeQuery));
+            carTypeCollection = ReturnCollectionOfTypes();
         }
 
         private Car selectedCar;
@@ -108,6 +105,23 @@ namespace AutoProjectWPF.ViewModel
                         }
                     }));
             }
+        }  
+        
+        /* Инициализирует коллекцию carTypeCollection,
+         * связь машина -> тип,
+         * где тип без повторений.
+         */
+        private ObservableCollection<CarType> ReturnCollectionOfTypes()
+        {
+            return new ObservableCollection<CarType>
+            {
+                CarType.Car,
+                CarType.PassengerCar,
+                CarType.SportCar,
+                CarType.Tipper,
+                CarType.TruckCar
+            };
         }
+
     }
 }
