@@ -1,5 +1,7 @@
 ﻿using AutoProjectWPF.ViewModel.Repositories;
 using Model;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Linq;
@@ -11,6 +13,18 @@ namespace AutoProjectWPF.ViewModel
         private string autoQuery = "select * from AutoConfig ac inner join AutoType at on ac.CarTypeId = at.id";
         RealizeCacheRepository realize;
 
+        private ObservableCollection<CarTypeViewModel> typesOfCar;
+        public ObservableCollection<CarTypeViewModel> TypesOfCar
+        {
+            get { return typesOfCar; }
+            set
+            {
+                typesOfCar = value;
+                OnPropertyChange();
+            }
+        }
+
+
         private ObservableCollection<Car> carCollection;
         public ObservableCollection<Car> CarCollection
         {
@@ -21,23 +35,12 @@ namespace AutoProjectWPF.ViewModel
                 OnPropertyChange();
             }
         }
-
-        private ObservableCollection<CarType> carTypeCollection;
-        public ObservableCollection<CarType> CarTypeCollection
-        {
-            get { return carTypeCollection; }
-            set
-            {
-                carTypeCollection = value;
-                OnPropertyChange();
-            }
-        }
-
+       
         public MainViewModel()
         {
             realize = new RealizeCacheRepository(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString); 
             CarCollection = new ObservableCollection<Car>(realize.Load(autoQuery));
-            carTypeCollection = ReturnCollectionOfTypes();
+            typesOfCar = ReturnTypes();
         }
 
         private Car selectedCar;
@@ -106,22 +109,21 @@ namespace AutoProjectWPF.ViewModel
                     }));
             }
         }  
-        
-        /* Инициализирует коллекцию carTypeCollection,
-         * связь машина -> тип,
-         * где тип без повторений.
-         */
-        private ObservableCollection<CarType> ReturnCollectionOfTypes()
-        {
-            return new ObservableCollection<CarType>
-            {
-                CarType.Car,
-                CarType.PassengerCar,
-                CarType.SportCar,
-                CarType.Tipper,
-                CarType.TruckCar
-            };
-        }
 
+        private ObservableCollection<CarTypeViewModel> ReturnTypes()
+        {
+            var list = new ObservableCollection<CarTypeViewModel>();
+
+            foreach (var item in Enum.GetValues(typeof(CarType)))
+            {
+                list.Add(new CarTypeViewModel()
+                {
+                    Id = (int) item,
+                    Type = (CarType) item
+                });
+            }
+
+            return list;
+        }
     }
 }

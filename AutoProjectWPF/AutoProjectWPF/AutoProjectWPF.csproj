@@ -57,6 +57,7 @@
     </ApplicationDefinition>
     <Compile Include="Model\Car.cs" />
     <Compile Include="Model\CarType.cs" />
+    <Compile Include="ViewModel\CarTypeViewModel.cs" />
     <Compile Include="Model\IIntegerKey.cs" />
     <Compile Include="Model\PassengerCar.cs" />
     <Compile Include="ViewModel\Repositories\BaseRepository.cs" />
