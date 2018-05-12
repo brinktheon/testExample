@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AutoProjectWPF"
+        xmlns:control="clr-namespace:ActionControl;assembly=ActionControl"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="430">
     <Grid>
@@ -15,6 +16,8 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="0.2*" />
         </Grid.RowDefinitions>
+
+
         <ListBox x:Name="MainList" Grid.Column="0" 
                  ItemsSource="{Binding CarCollection }" 
                  SelectedItem="{Binding SelectedCar}">
@@ -22,10 +25,12 @@
                 <DataTemplate>
                     <StackPanel Margin="5">
                         <TextBlock FontSize="14" Text="{Binding Path=Model}"/>
+                        <TextBlock FontSize ="10" Text="{Binding Path=TypeName}"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+
         <StackPanel Grid.Column="1">
             <StackPanel DataContext="{Binding SelectedCar}">
                 <TextBlock Text="Выбранный элемент"/>
@@ -33,28 +38,42 @@
                 <TextBox Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock Text="Модель" />
                 <TextBox Text="{Binding Model, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Text="Кол-во сидений" />
-                <TextBox Text="{Binding Seating, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Text="Максимальная скорость авто" />
-                <TextBox Text="{Binding MaxSpeed, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Text="Подъемный вес" />
-                <TextBox Text="{Binding LiftingWeight, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Text="Максимальный вес авто" />
-                <TextBox Text="{Binding MaxWeight, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Text="Кол-во сидений" Style="{StaticResource PassengerCarTextBlock}"/>
+                <TextBox Text="{Binding Seating, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource PassengerCarTextBox}" />
+
+                <TextBlock Text="Максимальная скорость авто" Style="{StaticResource SportCarCarTextBlock}"/>
+                <TextBox Text="{Binding MaxSpeed, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource SportCarCarTextBox}"/>
+
+                <TextBlock Text="Подъемный вес" Style="{StaticResource TruckCarCarTextBlock}"/>
+                <TextBox Text="{Binding LiftingWeight, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TruckCarCarTextBox}"/>
+
+                <TextBlock Text="Максимальный вес авто" Style="{StaticResource TipperTextBox}"/>
+                <TextBox Text="{Binding MaxWeight, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TipperTextBox}"/>
             </StackPanel>
-            
+
             <TextBlock Text="Тип" />
-            <ComboBox ItemsSource="{Binding TypesOfCar}"  
-                      SelectedValue="{Binding SelectedCar.Type, Mode=OneWay}"
-                      SelectedValuePath="Type"
-                      DisplayMemberPath="Type"
+            <ComboBox x:Name="TypeCombo"
+                      ItemsSource="{Binding TypesOfCar}"
+                      SelectedValue="{Binding SelectedCar.TypeName, Mode=OneWay}"
+                      SelectedValuePath="TypeName"
+                      DisplayMemberPath="TypeName"
                       IsSynchronizedWithCurrentItem="True"/>
 
+            <TextBlock Text="Смена цвета" Margin="10"/>
+            <ComboBox x:Name="BackColor" ItemsSource="{Binding ComboListColor}" SelectionChanged="BackColor_SelectionChanged"/>
+
         </StackPanel>
-        <StackPanel Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal" >
+        <!--Динамический ресурс для изменения цвета-->
+        <StackPanel Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal" Background="{DynamicResource ResourceKey=panel}">
             <Button Command="{Binding CreateItem}" Content="Create" Width="50" Height="50"  Margin="0,0,5,0"/>
             <Button Command="{Binding RemoveItem}" CommandParameter="{Binding SelectedCar}" Content="Remove" Width="50" Height="50"  Margin="0,0,5,0"/>
-            <Button Command="{Binding SaveItem}" CommandParameter="{Binding SelectedCar.Type}" Content="Save" Width="50" Height="50"/>
+            <Button Command="{Binding SaveItem}" CommandParameter="{Binding SelectedCar.Type}" Content="Save" Width="50" Height="50" Style="{StaticResource ResourceKey=buttonStyle}"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal"  Margin="10,0">
+
+            <control:UserControl1 Actions="{Binding ListOfActions}"/>
+
         </StackPanel>
     </Grid>
 </Window>

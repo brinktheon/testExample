@@ -5,7 +5,7 @@ namespace AutoProjectWPF.ViewModel
     class CarTypeViewModel : BaseViewModel
     {
         private int id;
-        private CarType type;
+        private string typeName;
 
         public int Id
         {
@@ -16,12 +16,13 @@ namespace AutoProjectWPF.ViewModel
                 OnPropertyChange();
             }
         }
-        public CarType Type
+
+        public string TypeName
         {
-            get { return type; }
+            get { return typeName; }
             set
             {
-                type = value;
+                typeName = value;
                 OnPropertyChange();
             }
         }

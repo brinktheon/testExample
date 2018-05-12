@@ -5,26 +5,23 @@ namespace Model
 {
     class Car : IIntegerKey
     {
-        public string Model { get; set; } = "None";
+        public string Model { get; set; }
 
-        public CarType Type { get; set; }
+        public string TypeName { get; set; }
 
         public int Id { get; set; }
 
+        public int Seating { get; set; }
+
+        public int MaxSpeed { get; set; }
+
+        public int LiftingWeight { get; set; }
+
+        public int MaxWeight { get; set; }
+
         public Car()
         {
-            this.Type = CarType.Car;
-        }
 
-        public Car(int Id, string Model)
-        {
-            this.Model = Model;
-            this.Id = Id;
-        }
-
-        public virtual string GetInfo()
-        {
-            return String.Format("Модель авто: {0}\n", this.Model);
         }
     }
 }
