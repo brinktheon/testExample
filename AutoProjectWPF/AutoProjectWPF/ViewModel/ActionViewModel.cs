@@ -7,6 +7,7 @@ namespace AutoProjectWPF.ViewModel
     {
         private Action<object> execute;
         private Func<object, bool> canExecute;
+        public string DisplayName { get; set; }
 
         public event EventHandler CanExecuteChanged
         {

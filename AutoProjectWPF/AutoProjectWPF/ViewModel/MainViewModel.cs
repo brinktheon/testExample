@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace AutoProjectWPF.ViewModel
@@ -13,33 +14,89 @@ namespace AutoProjectWPF.ViewModel
     class MainViewModel : BaseViewModel
     {
         private string autoQuery = "select * from AutoConfig ac inner join AutoType at on ac.CarTypeId = at.id";
-        private string autoQueryType = "select at.TypeName, at.Id from AutoType at";
+        private string autoQueryType = "select * from AutoType at";
         RealizeCacheRepository realize;
         BaseRepository<CarTypeViewModel> baserepo;
+
+        //Pessanger
+        private bool passengerCarVisibility;
+        public bool PassengerCarVisibility
+        {
+            get
+            {
+                return passengerCarVisibility;
+            }
+            set
+            {
+                passengerCarVisibility = value;
+                OnPropertyChange();
+            }
+        }
+        //Sport
+        private bool sportCarCarVisibility;
+        public bool SportCarCarVisibility
+        {
+            get
+            {
+                return sportCarCarVisibility;
+            }
+            set
+            {
+                sportCarCarVisibility = value;
+                OnPropertyChange();
+            }
+        }
+        //Truck
+        private bool truckCarCarVisibility;
+        public bool TruckCarCarVisibility
+        {
+            get
+            {
+                return truckCarCarVisibility;
+            }
+            set
+            {
+                truckCarCarVisibility = value;
+                OnPropertyChange();
+            }
+        }
+        //Tipper
+        private bool tipperCarVisibility;
+        public bool TipperrCarVisibility
+        {
+            get
+            {
+                return tipperCarVisibility;
+            }
+            set
+            {
+                tipperCarVisibility = value;
+                OnPropertyChange();
+            }
+        }
 
 
         public IEnumerable<string> ComboListColor { get { return typeof(Colors).GetProperties().Select(x => x.Name); } }
 
-        //collection 2
-        private ObservableCollection<Actions> listOfActions;
-        public ObservableCollection<Actions> ListOfActions
+        private string comboListSelectedColor;
+        public string ComboListSelectedColor
+        {
+            get { return comboListSelectedColor; }
+            set
+            {
+                comboListSelectedColor = value;
+                Application.Current.Resources["panel"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(comboListSelectedColor));
+                OnPropertyChange();
+            }
+        }
+
+        private ObservableCollection<ICommand> listOfActions;
+        public ObservableCollection<ICommand> ListOfActions
         {
             get { return listOfActions; }
             set
             {
                 listOfActions = value;
-                OnPropertyChange();
-            }
-        }
-
-        //collection 1
-        private ObservableCollection<Action> lOfActions;
-        public ObservableCollection<Action> LOfActions
-        {
-            get { return lOfActions; }
-            set
-            {
-                lOfActions = value;
                 OnPropertyChange();
             }
         }
@@ -75,31 +132,11 @@ namespace AutoProjectWPF.ViewModel
             CarCollection = new ObservableCollection<Car>(realize.Load(autoQuery));
             typesOfCar = new ObservableCollection<CarTypeViewModel>(baserepo.Load(autoQueryType));
 
-            //Первый вариант
-            LOfActions = new ObservableCollection<Action>() {
-                () => { MessageBox.Show("Action 1"); },
-                () => { MessageBox.Show("Action 2"); },
-                () => { MessageBox.Show("Action 3"); }
-            };
-
-            //Второй вариант
-            ListOfActions = new ObservableCollection<Actions>() {
-                 new Actions()
-                 {
-                     Command = new ActionViewModel(obj => { MessageBox.Show("Action 1"); })
-                 },
-                 new Actions()
-                 {
-                     Command = new ActionViewModel(obj => { MessageBox.Show("Action 2"); })
-                 },
-                 new Actions()
-                 {
-                     Command = new ActionViewModel(obj => { MessageBox.Show("Action  3"); })
-                 },
-                 new Actions()
-                 {
-                     Command = new ActionViewModel(obj => { MessageBox.Show("Action  4"); })
-                 }
+            ListOfActions = new ObservableCollection<ICommand>()
+            {
+                CreateItem,
+                SaveItem,
+                RemoveItem
             };
         }
 
@@ -110,6 +147,10 @@ namespace AutoProjectWPF.ViewModel
             set
             {
                 selectedCar = value;
+                PassengerCarVisibility = selectedCar.Type == CarType.PassengerCar || selectedCar.Type == CarType.SportCar;
+                TruckCarCarVisibility = selectedCar.Type == CarType.TruckCar || selectedCar.Type == CarType.Tipper;
+                SportCarCarVisibility = selectedCar.Type == CarType.SportCar;
+                TipperrCarVisibility = selectedCar.Type == CarType.Tipper;
                 OnPropertyChange();
             }
         }
@@ -130,7 +171,10 @@ namespace AutoProjectWPF.ViewModel
                         var car = new Car();
                         carCollection.Add(car);
                         SelectedCar = car;
-                    }));
+                    })
+                    {
+                        DisplayName = "Create"
+                    });
             }
         }
 
@@ -146,7 +190,10 @@ namespace AutoProjectWPF.ViewModel
                 return saveItem ??
                     (saveItem = new ActionViewModel(obj =>
                     {
-                    }));
+                    })
+                    {
+                        DisplayName = "Save"
+                    });
             }
         }
 
@@ -166,7 +213,10 @@ namespace AutoProjectWPF.ViewModel
                         {
                             CarCollection.Remove(car);
                         }
-                    }));
+                    })
+                    {
+                        DisplayName = "Remove"
+                    });
             }
         }
     }

@@ -7,7 +7,7 @@ namespace Model
     {
         public string Model { get; set; }
 
-        public string TypeName { get; set; }
+        public CarType Type { get; set; }
 
         public int Id { get; set; }
 
@@ -21,7 +21,7 @@ namespace Model
 
         public Car()
         {
-
+            Type = CarType.Car;
         }
     }
 }

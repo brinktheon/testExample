@@ -14,9 +14,5 @@ namespace AutoProjectWPF
             InitializeComponent();     
         }
 
-        private void BackColor_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            Resources["panel"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(BackColor.SelectedItem.ToString()));
-        }
     }
 }
