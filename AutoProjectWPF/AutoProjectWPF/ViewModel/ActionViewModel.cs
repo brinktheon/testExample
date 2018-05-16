@@ -15,8 +15,9 @@ namespace AutoProjectWPF.ViewModel
             remove { CommandManager.RequerySuggested -= value; }
         }
 
-        public ActionViewModel(Action<object> execute, Func<object, bool> canExecute = null)
+        public ActionViewModel(string DisplayName, Action<object> execute, Func<object, bool> canExecute = null)
         {
+            this.DisplayName = DisplayName;
             this.execute = execute;
             this.canExecute = canExecute;
         }

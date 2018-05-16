@@ -59,6 +59,7 @@
     <Compile Include="Model\CarType.cs" />
     <Compile Include="ViewModel\CarTypeViewModel.cs" />
     <Compile Include="Model\IIntegerKey.cs" />
+    <Compile Include="ViewModel\CarViewModel.cs" />
     <Compile Include="ViewModel\Repositories\BaseRepository.cs" />
     <Compile Include="ViewModel\Repositories\CachedRepositary.cs" />
     <Compile Include="ViewModel\Repositories\RealizeCacheRepository.cs" />
