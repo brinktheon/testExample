@@ -5,7 +5,7 @@ using System.Data.SqlClient;
 
 namespace AutoProjectWPF.ViewModel.Repositories
 {
-    abstract class BaseRepository<T> where T : new()
+    class BaseRepository<T> where T : new()
     {
         protected SqlConnection connection = null;
         protected SqlCommand cmd;

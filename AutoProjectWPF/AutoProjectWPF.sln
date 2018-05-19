@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27428.2011
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoProjectWPF", "AutoProjectWPF\AutoProjectWPF.csproj", "{9AAAF21C-8A31-412F-832B-4E16FA096ED1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActionControl", "ActionControl\ActionControl.csproj", "{70A2A62B-24B7-4D56-A938-7674671B7BD9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{9AAAF21C-8A31-412F-832B-4E16FA096ED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AAAF21C-8A31-412F-832B-4E16FA096ED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AAAF21C-8A31-412F-832B-4E16FA096ED1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70A2A62B-24B7-4D56-A938-7674671B7BD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70A2A62B-24B7-4D56-A938-7674671B7BD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70A2A62B-24B7-4D56-A938-7674671B7BD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70A2A62B-24B7-4D56-A938-7674671B7BD9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
