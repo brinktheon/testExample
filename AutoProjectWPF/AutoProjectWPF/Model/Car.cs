@@ -5,23 +5,18 @@ namespace Model
 {
     class Car : IIntegerKey
     {
-        public string Model { get; set; }
+        public virtual string Model { get; set; }
 
-        public string TypeName { get; set; }
+        public virtual CarType Type { get; set; }
 
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
-        public int Seating { get; set; }
+        public virtual int Seating { get; set; }
 
-        public int MaxSpeed { get; set; }
+        public virtual int MaxSpeed { get; set; }
 
-        public int LiftingWeight { get; set; }
+        public virtual int LiftingWeight { get; set; }
 
-        public int MaxWeight { get; set; }
-
-        public Car()
-        {
-
-        }
+        public virtual int MaxWeight { get; set; }
     }
 }

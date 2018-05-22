@@ -6,7 +6,11 @@
         xmlns:local="clr-namespace:AutoProjectWPF"
         xmlns:control="clr-namespace:ActionControl;assembly=ActionControl"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="430">
+        Title="MainWindow" Height="450" Width="550">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -18,62 +22,56 @@
         </Grid.RowDefinitions>
 
 
-        <ListBox x:Name="MainList" Grid.Column="0" 
-                 ItemsSource="{Binding CarCollection }" 
+        <ListBox x:Name="MainList" Grid.Column="0"      
+                 ItemsSource="{Binding CarCollection}" 
                  SelectedItem="{Binding SelectedCar}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Margin="5">
                         <TextBlock FontSize="14" Text="{Binding Path=Model}"/>
-                        <TextBlock FontSize ="10" Text="{Binding Path=TypeName}"/>
+                        <TextBlock FontSize ="10" Text="{Binding Path=Type}"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
 
         <StackPanel Grid.Column="1">
-            <StackPanel DataContext="{Binding SelectedCar}">
-                <TextBlock Text="Выбранный элемент"/>
-                <TextBlock Text="Id" />
-                <TextBox Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Text="Модель" />
-                <TextBox Text="{Binding Model, UpdateSourceTrigger=PropertyChanged}" />
 
-                <TextBlock Text="Кол-во сидений" Style="{StaticResource PassengerCarTextBlock}"/>
-                <TextBox Text="{Binding Seating, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource PassengerCarTextBox}" />
+            <TextBlock Text="Выбранный элемент"/>
+            <TextBlock Text="Id" />
+            <TextBox Text="{Binding SelectedCar.Id, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Text="Модель" />
+            <TextBox Text="{Binding SelectedCar.Model, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <TextBlock Text="Максимальная скорость авто" Style="{StaticResource SportCarCarTextBlock}"/>
-                <TextBox Text="{Binding MaxSpeed, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource SportCarCarTextBox}"/>
+            <TextBlock Text="Кол-во сидений" Visibility="{Binding Path=SelectedCar.PassengerCarVisibility, Converter={StaticResource BoolToVis}}"/>
+            <TextBox Text="{Binding SelectedCar.Seating, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Path=SelectedCar.PassengerCarVisibility, Converter={StaticResource BoolToVis}}"/>
 
-                <TextBlock Text="Подъемный вес" Style="{StaticResource TruckCarCarTextBlock}"/>
-                <TextBox Text="{Binding LiftingWeight, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TruckCarCarTextBox}"/>
+            <TextBlock Text="Максимальная скорость авто" Visibility="{Binding Path=SelectedCar.SportCarCarVisibility, Converter={StaticResource BoolToVis}}"/>
+            <TextBox Text="{Binding SelectedCar.MaxSpeed, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Path=SelectedCar.SportCarCarVisibility, Converter={StaticResource BoolToVis}}"/>
 
-                <TextBlock Text="Максимальный вес авто" Style="{StaticResource TipperTextBox}"/>
-                <TextBox Text="{Binding MaxWeight, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TipperTextBox}"/>
-            </StackPanel>
+            <TextBlock Text="Подъемный вес" Visibility="{Binding Path=SelectedCar.TruckCarCarVisibility, Converter={StaticResource BoolToVis}}"/>
+            <TextBox Text="{Binding SelectedCar.LiftingWeight, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Path=SelectedCar.TruckCarCarVisibility, Converter={StaticResource BoolToVis}}"/>
+
+            <TextBlock Text="Максимальный вес авто" Visibility="{Binding Path=SelectedCar.TipperrCarVisibility, Converter={StaticResource BoolToVis}}"/>
+            <TextBox Text="{Binding SelectedCar.MaxWeight, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Path=SelectedCar.TipperrCarVisibility, Converter={StaticResource BoolToVis}}"/>
+
 
             <TextBlock Text="Тип" />
-            <ComboBox x:Name="TypeCombo"
+            <ComboBox x:Name="TypeCombo" 
                       ItemsSource="{Binding TypesOfCar}"
-                      SelectedValue="{Binding SelectedCar.TypeName, Mode=OneWay}"
-                      SelectedValuePath="TypeName"
+                      SelectedItem="{Binding SelectedType}"
+                      SelectedValue="{Binding SelectedCar.Type, Mode=OneWay}" 
+                      SelectedValuePath="Type"
                       DisplayMemberPath="TypeName"
                       IsSynchronizedWithCurrentItem="True"/>
 
             <TextBlock Text="Смена цвета" Margin="10"/>
-            <ComboBox x:Name="BackColor" ItemsSource="{Binding ComboListColor}" SelectionChanged="BackColor_SelectionChanged"/>
+            <ComboBox x:Name="BackColor" ItemsSource="{Binding ComboListColor}" SelectedItem="{Binding ComboListSelectedColor}"/>
 
         </StackPanel>
         <!--Динамический ресурс для изменения цвета-->
         <StackPanel Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal" Background="{DynamicResource ResourceKey=panel}">
-            <Button Command="{Binding CreateItem}" Content="Create" Width="50" Height="50"  Margin="0,0,5,0"/>
-            <Button Command="{Binding RemoveItem}" CommandParameter="{Binding SelectedCar}" Content="Remove" Width="50" Height="50"  Margin="0,0,5,0"/>
-            <Button Command="{Binding SaveItem}" CommandParameter="{Binding SelectedCar.Type}" Content="Save" Width="50" Height="50" Style="{StaticResource ResourceKey=buttonStyle}"/>
-        </StackPanel>
-        <StackPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal"  Margin="10,0">
-
-            <control:UserControl1 Actions="{Binding ListOfActions}"/>
-
+            <control:ActionsControl Actions="{Binding ListOfActions}" />
         </StackPanel>
     </Grid>
 </Window>

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="AutoProjectWPF"
+                   namespace="Model">
+
+  <class name="Car" table="AutoConfig">
+    <id name="Id" column="Id">
+      <generator class="identity"/>
+    </id>
+    <property name="Type" />
+    <property name="Model" />
+    <property name="Seating" />
+    <property name="MaxSpeed" />
+    <property name="LiftingWeight" />
+    <property name="MaxWeight" />
+  </class>
+
+</hibernate-mapping>
