@@ -1,4 +1,5 @@
-﻿using AutoProjectWPF.ViewModel.Repositories;
+﻿using AutoProjectWPF.Model;
+using AutoProjectWPF.ViewModel.Repositories;
 using Model;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,9 @@ namespace AutoProjectWPF.ViewModel
 {
     class MainViewModel : BaseViewModel
     {
-        private string autoQuery = "select * from AutoConfig ac inner join AutoType at on ac.CarTypeId = at.id";
-        private string autoQueryType = "select * from AutoType at";
-        RealizeCacheRepository realize;
-        BaseRepository<CarTypeViewModel> baserepo;
+        CachedRepositary<Car> realize;
+        BaseRepository<CarTypeModel> baserepo;
+        private int counOfNoChangeItems;
 
         public IEnumerable<string> ComboListColor { get { return typeof(Colors).GetProperties().Select(x => x.Name); } }
 
@@ -55,6 +55,17 @@ namespace AutoProjectWPF.ViewModel
             }
         }
 
+        private CarTypeViewModel selectedType;
+        public CarTypeViewModel SelectedType
+        {
+            get { return selectedType; }
+            set
+            {
+                selectedType = value;
+                OnPropertyChange();
+            }
+        }
+
         private ObservableCollection<CarViewModel> carCollection;
         public ObservableCollection<CarViewModel> CarCollection
         {
@@ -68,23 +79,19 @@ namespace AutoProjectWPF.ViewModel
 
         public MainViewModel()
         {
-            realize = new RealizeCacheRepository(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            baserepo = new BaseRepository<CarTypeViewModel>(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-
-
-            CarCollection = new ObservableCollection<CarViewModel>();
-            foreach (Car car in realize.Load(autoQuery))
-            {
-                CarCollection.Add(new CarViewModel(car));
-            }
-
-            typesOfCar = new ObservableCollection<CarTypeViewModel>(baserepo.Load(autoQueryType));
+            realize = new CachedRepositary<Car>();
+            baserepo = new BaseRepository<CarTypeModel>();
+            CarCollection = new ObservableCollection<CarViewModel>(realize.Load().Select(car => new CarViewModel(car)));
+            typesOfCar = new ObservableCollection<CarTypeViewModel>(baserepo.Load().Select(carModel => new CarTypeViewModel(carModel)));
+            counOfNoChangeItems = carCollection.Count;
 
             ListOfActions = new ObservableCollection<ICommand>()
             {
-                CreateItem,
+                CreateEmptyItem,
+                AddItem,
+                RemoveItem,
                 SaveItem,
-                RemoveItem
+                UndoChangeItem
             };
         }
 
@@ -102,27 +109,47 @@ namespace AutoProjectWPF.ViewModel
         /*
          * Command to Create Item
          * Добавляет пустой элемент для редактирование
-         * и дальнейшего сохранения (Command Save)
+         * и дальнейшего добавления в коллекцию (AddItem)
          */
-        private ActionViewModel createItem;
-        public ActionViewModel CreateItem
+        private ActionViewModel createEmptyItem;
+        public ActionViewModel CreateEmptyItem
         {
             get
             {
-                return createItem ??
-                    (createItem = new ActionViewModel("Create",
+                return createEmptyItem ??
+                    (createEmptyItem = new ActionViewModel("Create",
                     obj =>
                     {
-                        var car = new CarViewModel(new Car());
-                        carCollection.Add(car);
-                        SelectedCar = car;
+                        SelectedCar = new CarViewModel(new Car()
+                        {
+                            Id = CarCollection.Count + 1
+                        });
                     }));
             }
         }
-
+        /*
+        * Command to Add Item
+        * Добавляет созданный элемент в коллекцию
+        */
+        private ActionViewModel addItem;
+        public ActionViewModel AddItem
+        {
+            get
+            {
+                return addItem ??
+                    (addItem = new ActionViewModel("Add Item",
+                    obj =>
+                    {
+                        if (!CarCollection.Contains(SelectedCar))
+                        {
+                            SelectedCar.Type = selectedType.Type;
+                            carCollection.Add(SelectedCar);
+                        }
+                    }));
+            }
+        }
         /*
          * Command to Save Item 
-         * Не реализовано по заданию
          */
         private ActionViewModel saveItem;
         public ActionViewModel SaveItem
@@ -133,6 +160,8 @@ namespace AutoProjectWPF.ViewModel
                     (saveItem = new ActionViewModel("Save",
                     obj =>
                     {
+                        counOfNoChangeItems = carCollection.Count;
+                        realize.Save(SelectedCar.ReturnCar());
                     }));
             }
         }
@@ -150,10 +179,23 @@ namespace AutoProjectWPF.ViewModel
                     (removeItem = new ActionViewModel("Remove",
                     obj =>
                     {
-                        if (obj is CarViewModel car)
-                        {
-                            CarCollection.Remove(car);
-                        }
+                        CarCollection.Remove(selectedCar);
+                    }));
+            }
+        }
+        /*
+         * Отмена изменений на форме
+         */
+        private ActionViewModel undoChangeItem;
+        public ActionViewModel UndoChangeItem
+        {
+            get
+            {
+                return undoChangeItem ??
+                    (undoChangeItem = new ActionViewModel("UndoChange",
+                    obj =>
+                    {
+                        CarCollection = new ObservableCollection<CarViewModel>(CarCollection.Take(counOfNoChangeItems));
                     }));
             }
         }

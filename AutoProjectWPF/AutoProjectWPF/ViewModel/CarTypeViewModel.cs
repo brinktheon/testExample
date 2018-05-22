@@ -1,39 +1,43 @@
-﻿using Model;
+﻿using AutoProjectWPF.Model;
+using Model;
 
 namespace AutoProjectWPF.ViewModel
 {
     class CarTypeViewModel : BaseViewModel
     {
-        private int id;
-        private string typeName;
-        private CarType type;
+        private CarTypeModel carTypeModel;
+
+        public CarTypeViewModel(CarTypeModel carTypeModel)
+        {
+            this.carTypeModel = carTypeModel;
+        }
 
         public int Id
         {
-            get { return Id; }
+            get { return carTypeModel.Id; }
             set
             {
-                id = value;
+                carTypeModel.Id = value;
                 OnPropertyChange();
             }
         }
 
         public string TypeName
         {
-            get { return typeName; }
+            get { return carTypeModel.TypeName; }
             set
             {
-                typeName = value;
+                carTypeModel.TypeName = value;
                 OnPropertyChange();
             }
         }
 
         public CarType Type
         {
-            get { return type; }
+            get { return carTypeModel.Type; }
             set
             {
-                type = value;
+                carTypeModel.Type = value;
                 OnPropertyChange();
             }
         }

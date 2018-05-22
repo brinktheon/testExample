@@ -9,19 +9,16 @@ namespace AutoProjectWPF.ViewModel.Repositories
     class CachedRepositary<T> : BaseRepository<T> where T : IIntegerKey, new()
     {
         protected static IDictionary<int, T> LocalCache = new Dictionary<int, T>();
-        private string sql;
 
-        public CachedRepositary(string stringConnection) : base(stringConnection) { }
+        public CachedRepositary() { }
 
         public T LoadById(int id)
         {
-            sql = "select * from AutoConfig ac inner join AutoType at on ac.CarTypeId = at.id and  ac.Id = " + id + "; ";
-
-            if (!LocalCache.TryGetValue(id, out T loaclCar))
+            if (!LocalCache.TryGetValue(id, out T loaclObject))
             {
-                loaclCar = base.Load(sql)[0];
+                loaclObject = base.Load().Where(item => item.Id == id).FirstOrDefault();
             }
-            return loaclCar;
+            return loaclObject;
         }
 
         public IList<T> LoadFromCacheByLinq(Func<T, bool> predicate)
@@ -29,13 +26,13 @@ namespace AutoProjectWPF.ViewModel.Repositories
             return LocalCache.Values.Where(predicate).ToList();
         }
 
-        public override List<T> Load(string sql)
+        public override List<T> Load()
         {
-            foreach (T value in base.Load(sql))
+            foreach (T value in base.Load())
             {
                 LocalCache[value.Id] = value;
             }
-            return base.Load(sql);
+            return base.Load();
         }
     }
 }

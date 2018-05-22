@@ -15,14 +15,18 @@ namespace AutoProjectWPF.ViewModel
         {
             this.car = car;
         }
+        /*
+         * Type == 0
+         * Проверка для нового объекта, по созданию у него CarType = 0
+         * Что бы можно было заполнить поля и выбрать нужны тип
+         */
+        public bool PassengerCarVisibility => Type == CarType.PassengerCar || Type == CarType.SportCar || Type == 0;
 
-        public bool PassengerCarVisibility => Type == CarType.PassengerCar || Type == CarType.SportCar;
+        public bool TruckCarCarVisibility => Type == CarType.TruckCar || Type == CarType.Tipper || Type == 0;
 
-        public bool TruckCarCarVisibility => Type == CarType.TruckCar || Type == CarType.Tipper;
+        public bool SportCarCarVisibility => Type == CarType.SportCar || Type == 0;
 
-        public bool SportCarCarVisibility => Type == CarType.SportCar;
-
-        public bool TipperrCarVisibility => Type == CarType.Tipper;
+        public bool TipperrCarVisibility => Type == CarType.Tipper || Type == 0;
 
         public string Model
         {
@@ -93,5 +97,7 @@ namespace AutoProjectWPF.ViewModel
                 OnPropertyChange();
             }
         }
+
+        public Car ReturnCar() => car;
     }
 }

@@ -1,104 +1,41 @@
-﻿using System;
+﻿using AutoProjectWPF.NHibernate;
+using NHibernate;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-
+using System.Linq;
 
 namespace AutoProjectWPF.ViewModel.Repositories
 {
     class BaseRepository<T> where T : new()
     {
-        protected SqlConnection connection = null;
-        protected SqlCommand cmd;
-        protected SqlDataReader reader;
-        protected string stringConnection;
+        private ISession session;
+        private ITransaction transaction;
 
-        public BaseRepository(string stringConnection)
+        public BaseRepository()
         {
-            this.stringConnection = stringConnection;
+            session = NHibernateHelper.OpenSession();
         }
 
-        public BaseRepository() { }
-
-        public void OpenConnection(string stringConnection)
+        public virtual List<T> Load()
         {
-            try
-            {
-                connection = new SqlConnection();
-                connection.ConnectionString = stringConnection;
-                connection.Open();
-
-            }
-            catch (SqlException e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        }
-
-        public void CloseConnection()
-        {
-            try
-            {
-                connection.Close();
-            }
-            catch (SqlException e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        }
-
-        public virtual List<T> Load(string sql)
-        {
-            OpenConnection(stringConnection);
-
             var localListObjects = new List<T>();
             try
             {
-                cmd = new SqlCommand(sql, connection);
-                reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    localListObjects.Add(Serialize(reader));
-                }
+                localListObjects = session.Query<T>().ToList();
             }
             catch (SqlException e)
             {
                 Console.WriteLine(e.ToString());
-            }
-            finally
-            {
-                reader.Close();
-                CloseConnection();
             }
             return localListObjects;
         }
 
-        public virtual T Serialize(SqlDataReader reader)
+        public void Save(T obj)
         {
-            var results = default(T);
-
-            var item = TypeOfEntity(reader);
-            foreach (var property in item.GetType().GetProperties())
-            {
-                if (!reader.IsDBNull(reader.GetOrdinal(property.Name)))
-                {
-                    Type convertTo = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-                    if (convertTo.IsEnum)
-                    {
-                        property.SetValue(item, (Enum.Parse(convertTo, reader[property.Name].ToString())), null);
-                    }
-                    else
-                        property.SetValue(item, Convert.ChangeType(reader[property.Name], convertTo), null);
-                }
-            }
-            results = item;
-
-            return results;
-        }
-
-        public virtual T TypeOfEntity(SqlDataReader reader)
-        {
-            return new T();
+            transaction = session.BeginTransaction();
+            session.Save(obj);
+            transaction.Commit();
         }
     }
 }
