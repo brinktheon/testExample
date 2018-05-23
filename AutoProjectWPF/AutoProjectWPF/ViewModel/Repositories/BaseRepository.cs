@@ -9,8 +9,8 @@ namespace AutoProjectWPF.ViewModel.Repositories
 {
     class BaseRepository<T> where T : new()
     {
-        private ISession session;
-        private ITransaction transaction;
+        protected ISession session;
+        protected ITransaction transaction;
 
         public BaseRepository()
         {
