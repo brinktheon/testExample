@@ -7,7 +7,6 @@
     <id name="Id" column="id">
       <generator class="identity"/>
     </id>
-    <property name="Type" column="Type" type="AutoProjectWPF.NHibernate.CarTypeEnumStringType, AutoProjectWPF"/>
     <property name="TypeName" column="TypeName"/>
   </class>
 

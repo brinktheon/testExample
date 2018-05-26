@@ -32,14 +32,6 @@ namespace AutoProjectWPF.ViewModel
             }
         }
 
-        public CarType Type
-        {
-            get { return carTypeModel.Type; }
-            set
-            {
-                carTypeModel.Type = value;
-                OnPropertyChange();
-            }
-        }
+        public CarType Type => (CarType)Id;
     }
 }

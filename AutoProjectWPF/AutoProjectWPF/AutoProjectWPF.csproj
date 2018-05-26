@@ -75,7 +75,6 @@
     <Compile Include="Model\Car.cs" />
     <Compile Include="Model\CarType.cs" />
     <Compile Include="Model\CarTypeModel.cs" />
-    <Compile Include="NHibernate\CarTypeEnumStringType.cs" />
     <Compile Include="NHibernate\NHibernateHelper.cs" />
     <Compile Include="ViewModel\CarTypeViewModel.cs" />
     <Compile Include="Model\IIntegerKey.cs" />

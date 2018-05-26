@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AutoProjectWPF"
         xmlns:control="clr-namespace:ActionControl;assembly=ActionControl"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="550">
+        Title="MainWindow" Height="450" Width="620">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </Window.Resources>

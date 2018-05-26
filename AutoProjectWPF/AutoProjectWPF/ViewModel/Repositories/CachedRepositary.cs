@@ -12,33 +12,54 @@ namespace AutoProjectWPF.ViewModel.Repositories
 
         public CachedRepositary() { }
 
-        public T LoadById(int id)
+        /// <summary>
+        /// Возвращает объет по ключу(Id) из кэша,
+        /// если такого объекта нету в кэше, то выгружает 
+        /// объект из БД и кладет в кэш.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public override T GetByKey(int id)
         {
             if (!LocalCache.TryGetValue(id, out T loaclObject))
             {
-                loaclObject = session.Get<T>(id);
+                loaclObject = base.GetByKey(id);
             }
             return loaclObject;
         }
 
-        public T GetByLinq(Func<T, bool> predicate)
+        /// <summary>
+        /// Возвращает список объектов по Linq запросу, 
+        /// проверяет есть ли эти объекты в кэше, 
+        /// если нет, то кладет их в кэш.
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public override IList<T> GetByLinq(Func<T, bool> predicate)
         {
-            T localObject = session.Query<T>().FirstOrDefault(predicate);
-            // Если объекта нет в кэше добавляю его
-            if (!LocalCache.ContainsKey(localObject.Id))
+            IList<T> localObjects = base.GetByLinq(predicate);
+            foreach (T item in localObjects)
             {
-                LocalCache[localObject.Id] = localObject;
+                if (!LocalCache.ContainsKey(item.Id))
+                {
+                    LocalCache[item.Id] = item;
+                }
             }
-
-            return localObject;
+            return localObjects;
         }
 
-        public IList<T> GetByQuery(string query)
+        /// <summary>
+        /// Возвращает список объектов по Sql запросу, 
+        /// проверяет есть ли эти объекты в кэше, 
+        /// если нет, то кладет их в кэш.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public override IList<T> GetByQuery(string query)
         {
-            IList<T> localList = session.CreateSQLQuery(query).AddEntity(typeof(T)).List<T>();
+            IList<T> localList = base.GetByQuery(query);
             foreach (T value in localList)
             {
-                // Если объекта нет в кэше добавляю его
                 if (!LocalCache.ContainsKey(value.Id))
                 {
                     LocalCache[value.Id] = value;
@@ -47,15 +68,25 @@ namespace AutoProjectWPF.ViewModel.Repositories
             return localList;
         }
 
-        public IList<T> LoadFromCacheByLinq(Func<T, bool> predicate)
+        /// <summary>
+        /// Возвращает списко объектов из кэша по Linq запросу
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public IList<T> GetFromCacheByLinq(Func<T, bool> predicate)
         {
             return LocalCache.Values.Where(predicate).ToList();
         }
 
-        // Немного изменил, а то два раза выгрузка данных получается.
-        public override List<T> Load()
+        /// <summary>
+        /// Возвращает список объектов по из БД, 
+        /// проверяет есть ли эти объекты в кэше, 
+        /// если нет, то кладет их в кэш.
+        /// </summary>
+        /// <returns></returns>
+        public override IList<T> Load()
         {
-            List<T> localList = base.Load();
+            IList<T> localList = base.Load();
             foreach (T value in localList)
             {
                 LocalCache[value.Id] = value;

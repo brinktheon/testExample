@@ -4,7 +4,6 @@ using Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Configuration;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -14,11 +13,20 @@ namespace AutoProjectWPF.ViewModel
 {
     class MainViewModel : BaseViewModel
     {
-        CachedRepositary<Car> realize;
-        BaseRepository<CarTypeModel> baserepo;
+        CachedRepositary<Car> CarRepo;
+        //Сделано для того, что бы записи напрямую считывались из БД, а не брались из кэша
+        BaseRepository<Car> LoadingRecordsRepo;
+        BaseRepository<CarTypeModel> CarTypeRepo;
+
         private int counOfNoChangeItems;
 
         public IEnumerable<string> ComboListColor { get { return typeof(Colors).GetProperties().Select(x => x.Name); } }
+
+        /*Коллекция для отката изменения, содержит в себе 
+         * Id измененных элементов в начальном состоянии.
+         */
+        private IList<int> IdChangedItems;
+
 
         private string comboListSelectedColor;
         public string ComboListSelectedColor
@@ -79,18 +87,21 @@ namespace AutoProjectWPF.ViewModel
 
         public MainViewModel()
         {
-            realize = new CachedRepositary<Car>();
-            baserepo = new BaseRepository<CarTypeModel>();
-            CarCollection = new ObservableCollection<CarViewModel>(realize.Load().Select(car => new CarViewModel(car)));
-            typesOfCar = new ObservableCollection<CarTypeViewModel>(baserepo.Load().Select(carModel => new CarTypeViewModel(carModel)));
+            CarRepo = new CachedRepositary<Car>();
+            CarTypeRepo = new BaseRepository<CarTypeModel>();
+            LoadingRecordsRepo = new BaseRepository<Car>();
+            CarCollection = new ObservableCollection<CarViewModel>(CarRepo.Load().Select(car => new CarViewModel(car)));
+            typesOfCar = new ObservableCollection<CarTypeViewModel>(CarTypeRepo.Load().Select(carModel => new CarTypeViewModel(carModel)));
             counOfNoChangeItems = carCollection.Count;
+            IdChangedItems = new List<int>();
 
             ListOfActions = new ObservableCollection<ICommand>()
             {
                 CreateEmptyItem,
                 AddItem,
-                RemoveItem,
                 SaveItem,
+                SaveAllItem,
+                RemoveItem,
                 UndoChangeItem
             };
         }
@@ -106,18 +117,16 @@ namespace AutoProjectWPF.ViewModel
             }
         }
 
-        /*
-         * Command to Create Item
-         * Добавляет пустой элемент для редактирование
-         * и дальнейшего добавления в коллекцию (AddItem)
-         */
+        /// <summary>
+        /// Добавляет пустой элемент для заполнения(не добавляя в коллекцию)
+        /// </summary>
         private ActionViewModel createEmptyItem;
         public ActionViewModel CreateEmptyItem
         {
             get
             {
                 return createEmptyItem ??
-                    (createEmptyItem = new ActionViewModel("Create",
+                    (createEmptyItem = new ActionViewModel("Create\nRecord",
                     obj =>
                     {
                         SelectedCar = new CarViewModel(new Car()
@@ -127,17 +136,17 @@ namespace AutoProjectWPF.ViewModel
                     }));
             }
         }
-        /*
-        * Command to Add Item
-        * Добавляет созданный элемент в коллекцию
-        */
+
+        /// <summary>
+        /// Доабвляет заполненный элемент в коллекцию
+        /// </summary>
         private ActionViewModel addItem;
         public ActionViewModel AddItem
         {
             get
             {
                 return addItem ??
-                    (addItem = new ActionViewModel("Add Item",
+                    (addItem = new ActionViewModel("Add\nToList",
                     obj =>
                     {
                         if (!CarCollection.Contains(SelectedCar))
@@ -148,54 +157,116 @@ namespace AutoProjectWPF.ViewModel
                     }));
             }
         }
-        /*
-         * Command to Save Item 
-         */
+        /// <summary>
+        /// Регестрирует изменения в записи путем добавления
+        /// Id изменяемого объектка в коллекцию.
+        /// </summary>
         private ActionViewModel saveItem;
         public ActionViewModel SaveItem
         {
             get
             {
                 return saveItem ??
-                    (saveItem = new ActionViewModel("Save",
+                    (saveItem = new ActionViewModel("Apply\nChange",
                     obj =>
                     {
+                        try
+                        {
+                            IdChangedItems.Add(selectedCar.Id);
+                            MessageBox.Show("Изменения сохранены.");
+                        }
+                        catch (NullReferenceException e)
+                        {
+                            MessageBox.Show("Не выбран сохраняемый объект. \n" + e.Message, "Ошибка выбора данных", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                    }));
+            }
+        }
+        /// <summary>
+        /// Сохраняет все изменения в БД
+        /// </summary>
+        private ActionViewModel saveAllItem;
+        public ActionViewModel SaveAllItem
+        {
+            get
+            {
+                return saveAllItem ??
+                    (saveAllItem = new ActionViewModel("SaveAll\nRecords",
+                    obj =>
+                    {
+                        try
+                        {
+                            //Сохраняет измененные запси
+                            foreach (int id in IdChangedItems)
+                            {
+                                CarRepo.Update(CarCollection.First(x => x.Id == id).ReturnCar());
+                            }
+                            //Сохраняет новые добавленные записи
+                            foreach (CarViewModel item in CarCollection.Skip(counOfNoChangeItems))
+                            {
+                                CarRepo.Save(item.ReturnCar());
+                            }
+
+                        }
+                        catch (NullReferenceException e)
+                        {
+                            MessageBox.Show("Не выбран сохраняемый объект. \n" + e.Message, "Ошибка выбора данных", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+
                         counOfNoChangeItems = carCollection.Count;
-                        realize.Save(SelectedCar.ReturnCar());
                     }));
             }
         }
 
-        /*
-         * Command to Remove Item from Collection
-         * Удаляет элемент из коллекции
-         */
+        /// <summary>
+        /// Удаляет элемент из БД
+        /// </summary>
         private ActionViewModel removeItem;
         public ActionViewModel RemoveItem
         {
             get
             {
                 return removeItem ??
-                    (removeItem = new ActionViewModel("Remove",
+                    (removeItem = new ActionViewModel("Remove\nRecord",
                     obj =>
                     {
+                        CarRepo.Remove(selectedCar.ReturnCar());
                         CarCollection.Remove(selectedCar);
+                        SelectedCar = CarCollection.FirstOrDefault();
                     }));
             }
         }
-        /*
-         * Отмена изменений на форме
-         */
+        /// <summary>
+        /// Отмена изменений на форме
+        /// </summary>
         private ActionViewModel undoChangeItem;
         public ActionViewModel UndoChangeItem
         {
             get
             {
                 return undoChangeItem ??
-                    (undoChangeItem = new ActionViewModel("UndoChange",
+                    (undoChangeItem = new ActionViewModel("Undo\nChanges",
                     obj =>
-                    {
+                    {   //Возвращает кол-во элементов коллекции к последнему сохраненному состоянию
                         CarCollection = new ObservableCollection<CarViewModel>(CarCollection.Take(counOfNoChangeItems));
+
+                        //Берет все элементы по Id из коллекции измененных элементов и выгружает их последнее состояние из БД
+                        /*
+                         * Была идея обновить данные просто выгрузив из БД, но думаю что это слишком затратно по времени.
+                         * Хотя по тому, что я сделал тоже есть сомнения, где то читал, что вложенные циклы долго работают.
+                         */
+                        for (int i = 0; i < CarCollection.Count; i++)
+                        {
+                            foreach (int id in IdChangedItems)
+                            {
+                                if (CarCollection[i].Id == id)
+                                {
+                                    CarCollection[i] = new CarViewModel(LoadingRecordsRepo.GetByKey(id));
+                                }
+                            }
+                        }
+                        IdChangedItems.Clear();
+                        SelectedCar = CarCollection.FirstOrDefault();
                     }));
             }
         }
