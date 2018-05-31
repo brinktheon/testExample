@@ -5,23 +5,29 @@ namespace Model
 {
     class Car : IIntegerKey
     {
-        public string Model { get; set; }
+        public virtual string Model { get; set; }
 
-        public CarType Type { get; set; }
+        public virtual CarType Type { get; set; }
 
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
-        public int Seating { get; set; }
+        public virtual int Seating { get; set; }
 
-        public int MaxSpeed { get; set; }
+        public virtual int MaxSpeed { get; set; }
 
-        public int LiftingWeight { get; set; }
+        public virtual int LiftingWeight { get; set; }
 
-        public int MaxWeight { get; set; }
+        public virtual int MaxWeight { get; set; }
 
-        public Car()
+        public override bool Equals(object obj)
         {
-            Type = CarType.Car;
+            return obj is Car car &&
+                   Id == car.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return 2108858624 + Id.GetHashCode();
         }
     }
 }

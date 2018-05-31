@@ -1,9 +1,9 @@
-﻿using AutoProjectWPF.ViewModel.Repositories;
+﻿using AutoProjectWPF.Model;
+using AutoProjectWPF.ViewModel.Repositories;
 using Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Configuration;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -13,10 +13,10 @@ namespace AutoProjectWPF.ViewModel
 {
     class MainViewModel : BaseViewModel
     {
-        private string autoQuery = "select * from AutoConfig ac inner join AutoType at on ac.CarTypeId = at.id";
-        private string autoQueryType = "select * from AutoType at";
-        RealizeCacheRepository realize;
-        BaseRepository<CarTypeViewModel> baserepo;
+        CachedRepositary<Car> CarRepo = new CachedRepositary<Car>();
+        //Сделано для того, что бы записи напрямую считывались из БД, а не брались из кэша
+        BaseRepository<Car> LoadingRecordsRepo = new BaseRepository<Car>();
+        BaseRepository<CarTypeModel> CarTypeRepo = new BaseRepository<CarTypeModel>();
 
         public IEnumerable<string> ComboListColor { get { return typeof(Colors).GetProperties().Select(x => x.Name); } }
 
@@ -55,6 +55,17 @@ namespace AutoProjectWPF.ViewModel
             }
         }
 
+        private CarTypeViewModel selectedType;
+        public CarTypeViewModel SelectedType
+        {
+            get { return selectedType; }
+            set
+            {
+                selectedType = value;
+                OnPropertyChange();
+            }
+        }
+
         private ObservableCollection<CarViewModel> carCollection;
         public ObservableCollection<CarViewModel> CarCollection
         {
@@ -68,23 +79,15 @@ namespace AutoProjectWPF.ViewModel
 
         public MainViewModel()
         {
-            realize = new RealizeCacheRepository(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            baserepo = new BaseRepository<CarTypeViewModel>(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-
-
-            CarCollection = new ObservableCollection<CarViewModel>();
-            foreach (Car car in realize.Load(autoQuery))
-            {
-                CarCollection.Add(new CarViewModel(car));
-            }
-
-            typesOfCar = new ObservableCollection<CarTypeViewModel>(baserepo.Load(autoQueryType));
+            CarCollection = new ObservableCollection<CarViewModel>(CarRepo.Load().Select(car => new CarViewModel(car)));
+            typesOfCar = new ObservableCollection<CarTypeViewModel>(CarTypeRepo.Load().Select(carModel => new CarTypeViewModel(carModel)));
 
             ListOfActions = new ObservableCollection<ICommand>()
             {
-                CreateItem,
+                CreateEmptyItem,
                 SaveItem,
-                RemoveItem
+                RemoveItem,
+                UndoChangeItem
             };
         }
 
@@ -99,31 +102,30 @@ namespace AutoProjectWPF.ViewModel
             }
         }
 
-        /*
-         * Command to Create Item
-         * Добавляет пустой элемент для редактирование
-         * и дальнейшего сохранения (Command Save)
-         */
-        private ActionViewModel createItem;
-        public ActionViewModel CreateItem
+        /// <summary>
+        /// Добавляет пустой элемент для заполнения(не добавляя в коллекцию)
+        /// </summary>
+        private ActionViewModel createEmptyItem;
+        public ActionViewModel CreateEmptyItem
         {
             get
             {
-                return createItem ??
-                    (createItem = new ActionViewModel("Create",
+                return createEmptyItem ??
+                    (createEmptyItem = new ActionViewModel("Create\nRecord",
                     obj =>
                     {
-                        var car = new CarViewModel(new Car());
-                        carCollection.Add(car);
-                        SelectedCar = car;
+                        SelectedCar = new CarViewModel(new Car()
+                        {
+                            Id = CarCollection.Count + 1
+                        });
                     }));
             }
         }
-
-        /*
-         * Command to Save Item 
-         * Не реализовано по заданию
-         */
+        /// <summary>
+        /// Записывает в БД обновленный или новый элемент,
+        /// при записи нового, добавляет его сначала в коллекцию,
+        /// а после в БД.
+        /// </summary>
         private ActionViewModel saveItem;
         public ActionViewModel SaveItem
         {
@@ -133,26 +135,54 @@ namespace AutoProjectWPF.ViewModel
                     (saveItem = new ActionViewModel("Save",
                     obj =>
                     {
+                        if (CarCollection.Contains(SelectedCar))
+                        {
+                            CarRepo.Update(SelectedCar.ReturnCar());
+                        }
+                        else
+                        {
+                            SelectedCar.Type = SelectedType.Type;
+                            CarCollection.Add(SelectedCar);
+                            CarRepo.Save(SelectedCar.ReturnCar());
+                        }
                     }));
             }
         }
-
-        /*
-         * Command to Remove Item from Collection
-         * Удаляет элемент из коллекции
-         */
+        /// <summary>
+        /// Удаляет элемент из БД
+        /// </summary>
         private ActionViewModel removeItem;
         public ActionViewModel RemoveItem
         {
             get
             {
                 return removeItem ??
-                    (removeItem = new ActionViewModel("Remove",
+                    (removeItem = new ActionViewModel("Remove\nRecord",
                     obj =>
                     {
-                        if (obj is CarViewModel car)
+                        CarRepo.Remove(selectedCar.ReturnCar());
+                        CarCollection.Remove(selectedCar);
+                        SelectedCar = CarCollection.FirstOrDefault();
+                    }));
+            }
+        }
+        /// <summary>
+        /// Отмена изменений на форме у выбранного объекта
+        /// </summary>
+        private ActionViewModel undoChangeItem;
+        public ActionViewModel UndoChangeItem
+        {
+            get
+            {
+                return undoChangeItem ??
+                    (undoChangeItem = new ActionViewModel("Undo\nChange",
+                    obj =>
+                    {
+                        // Если вызвать у не сохраненного обхекта в БД, а только что созданного, то отката не будет.
+                        if (CarCollection.Contains(SelectedCar))
                         {
-                            CarCollection.Remove(car);
+                            CarCollection[CarCollection.IndexOf(SelectedCar)] = new CarViewModel(LoadingRecordsRepo.GetByKey(SelectedCar.Id));
+                            SelectedCar = CarCollection.FirstOrDefault();
                         }
                     }));
             }

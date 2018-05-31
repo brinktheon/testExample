@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AutoProjectWPF"
         xmlns:control="clr-namespace:ActionControl;assembly=ActionControl"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="430">
+        Title="MainWindow" Height="450" Width="450">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </Window.Resources>
@@ -59,7 +59,8 @@
             <TextBlock Text="Тип" />
             <ComboBox x:Name="TypeCombo" 
                       ItemsSource="{Binding TypesOfCar}"
-                      SelectedValue="{Binding SelectedCar.Type, Mode=OneWay}"
+                      SelectedItem="{Binding SelectedType}"
+                      SelectedValue="{Binding SelectedCar.Type, Mode=OneWay}" 
                       SelectedValuePath="Type"
                       DisplayMemberPath="TypeName"
                       IsSynchronizedWithCurrentItem="True"/>

@@ -9,33 +9,89 @@ namespace AutoProjectWPF.ViewModel.Repositories
     class CachedRepositary<T> : BaseRepository<T> where T : IIntegerKey, new()
     {
         protected static IDictionary<int, T> LocalCache = new Dictionary<int, T>();
-        private string sql;
 
-        public CachedRepositary(string stringConnection) : base(stringConnection) { }
+        public CachedRepositary() { }
 
-        public T LoadById(int id)
+        /// <summary>
+        /// Возвращает объет по ключу(Id) из кэша,
+        /// если такого объекта нету в кэше, то выгружает 
+        /// объект из БД и кладет в кэш.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public override T GetByKey(int id)
         {
-            sql = "select * from AutoConfig ac inner join AutoType at on ac.CarTypeId = at.id and  ac.Id = " + id + "; ";
-
-            if (!LocalCache.TryGetValue(id, out T loaclCar))
+            if (!LocalCache.TryGetValue(id, out T loaclObject))
             {
-                loaclCar = base.Load(sql)[0];
+                loaclObject = base.GetByKey(id);
             }
-            return loaclCar;
+            return loaclObject;
         }
 
-        public IList<T> LoadFromCacheByLinq(Func<T, bool> predicate)
+        /// <summary>
+        /// Возвращает список объектов по Linq запросу, 
+        /// проверяет есть ли эти объекты в кэше, 
+        /// если нет, то кладет их в кэш.
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public override IList<T> GetByLinq(Func<T, bool> predicate)
+        {
+            IList<T> localObjects = base.GetByLinq(predicate);
+            foreach (T item in localObjects)
+            {
+                if (!LocalCache.ContainsKey(item.Id))
+                {
+                    LocalCache[item.Id] = item;
+                }
+            }
+            return localObjects;
+        }
+
+        /// <summary>
+        /// Возвращает список объектов по Sql запросу, 
+        /// проверяет есть ли эти объекты в кэше, 
+        /// если нет, то кладет их в кэш.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public override IList<T> GetByQuery(string query)
+        {
+            IList<T> localList = base.GetByQuery(query);
+            foreach (T value in localList)
+            {
+                if (!LocalCache.ContainsKey(value.Id))
+                {
+                    LocalCache[value.Id] = value;
+                }
+            }
+            return localList;
+        }
+
+        /// <summary>
+        /// Возвращает списко объектов из кэша по Linq запросу
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public IList<T> GetFromCacheByLinq(Func<T, bool> predicate)
         {
             return LocalCache.Values.Where(predicate).ToList();
         }
 
-        public override List<T> Load(string sql)
+        /// <summary>
+        /// Возвращает список объектов по из БД, 
+        /// проверяет есть ли эти объекты в кэше, 
+        /// если нет, то кладет их в кэш.
+        /// </summary>
+        /// <returns></returns>
+        public override IList<T> Load()
         {
-            foreach (T value in base.Load(sql))
+            IList<T> localList = base.Load();
+            foreach (T value in localList)
             {
                 LocalCache[value.Id] = value;
             }
-            return base.Load(sql);
+            return localList;
         }
     }
 }
