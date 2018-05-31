@@ -22,11 +22,7 @@ namespace AutoProjectWPF.ViewModel.Repositories
             {
                 using (var session = NHibernateHelper.OpenSession())
                 {
-                    using (var transaction = session.BeginTransaction())
-                    {
-                        localListObjects = session.Query<T>().ToList();
-                        transaction.Commit();
-                    }
+                    localListObjects = session.Query<T>().ToList();
                 }
             }
             catch (SqlException e)
@@ -46,11 +42,7 @@ namespace AutoProjectWPF.ViewModel.Repositories
             T localObject;
             using (var session = NHibernateHelper.OpenSession())
             {
-                using (var transaction = session.BeginTransaction())
-                {
-                    localObject = session.Get<T>(id);
-                    transaction.Commit();
-                }
+                localObject = session.Get<T>(id);
             }
             return localObject;
         }
@@ -67,11 +59,7 @@ namespace AutoProjectWPF.ViewModel.Repositories
             {
                 using (var session = NHibernateHelper.OpenSession())
                 {
-                    using (var transaction = session.BeginTransaction())
-                    {
-                        localListObjects = session.Query<T>().Where(predicate).ToList();
-                        transaction.Commit();
-                    }
+                    localListObjects = session.Query<T>().Where(predicate).ToList();
                 }
             }
             catch (SqlException e)
@@ -93,11 +81,7 @@ namespace AutoProjectWPF.ViewModel.Repositories
             {
                 using (var session = NHibernateHelper.OpenSession())
                 {
-                    using (var transaction = session.BeginTransaction())
-                    {
-                        localListObjects = session.CreateSQLQuery(query).AddEntity(typeof(T)).List<T>();
-                        transaction.Commit();
-                    }
+                    localListObjects = session.CreateSQLQuery(query).AddEntity(typeof(T)).List<T>();
                 }
             }
             catch (SqlException e)
@@ -117,11 +101,7 @@ namespace AutoProjectWPF.ViewModel.Repositories
             {
                 using (var session = NHibernateHelper.OpenSession())
                 {
-                    using (var transaction = session.BeginTransaction())
-                    {
-                        session.Save(obj);
-                        transaction.Commit();
-                    }
+                    session.Save(obj);
                 }
             }
             catch (SqlException e)
@@ -130,6 +110,10 @@ namespace AutoProjectWPF.ViewModel.Repositories
             }
         }
 
+        /// <summary>
+        /// Обновляет объект в БД
+        /// </summary>
+        /// <param name="obj"></param>
         public void Update(T obj)
         {
             try
