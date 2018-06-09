@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model
+namespace CommonLibrary.Model
 {
-    interface IIntegerKey
+    public interface IIntegerKey
     {
         int Id { get; }
     }

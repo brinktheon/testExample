@@ -1,12 +1,13 @@
-﻿using Model;
+﻿using CommonLibrary.Model;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace AutoProjectWPF.ViewModel.Repositories
+namespace CommonLibrary.Repositories
 {
-    class CachedRepositary<T> : BaseRepository<T> where T : IIntegerKey, new()
+    public class CachedRepositary<T> : BaseRepository<T> where T : IIntegerKey, new()
     {
         protected static IDictionary<int, T> LocalCache = new Dictionary<int, T>();
 
