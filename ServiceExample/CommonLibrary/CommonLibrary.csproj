@@ -48,6 +48,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
@@ -58,6 +59,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ErrorsHandlers\ErrorHandler.cs" />
+    <Compile Include="ErrorsHandlers\ErrorHandlerBehavior.cs" />
     <Compile Include="Model\Car.cs" />
     <Compile Include="Model\CarType.cs" />
     <Compile Include="Model\CarTypeModel.cs" />

@@ -67,7 +67,7 @@
       <wsa10:EndpointReference>
         <wsa10:Address>net.tcp://localhost:56562/RepositoryService</wsa10:Address>
         <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
-          <Upn>Chris-PC\Chris</Upn>
+          <Upn>DESKTOP-H5T5H96\andre</Upn>
         </Identity>
       </wsa10:EndpointReference>
     </wsdl:port>

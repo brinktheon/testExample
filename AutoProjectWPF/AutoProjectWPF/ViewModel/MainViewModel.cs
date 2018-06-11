@@ -7,6 +7,9 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using AutoProjectWPF.RepService;
+using System.ServiceModel;
+using ServiceExample;
+using System;
 
 namespace AutoProjectWPF.ViewModel
 {
@@ -143,7 +146,14 @@ namespace AutoProjectWPF.ViewModel
                         {
                             SelectedCar.Type = SelectedType.Type;
                             CarCollection.Add(SelectedCar);
-                            client.Save(SelectedCar.ReturnCar());
+                            try
+                            {
+                                client.Save(SelectedCar.ReturnCar());
+                            }
+                            catch (FaultException error)
+                            {
+                                MessageBox.Show(error.Message);
+                            }
                         }
                     }));
             }
