@@ -37,6 +37,10 @@
     <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr3.Runtime.3.5.1\lib\net40-client\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="CommonLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ServiceExample\CommonLibrary\bin\Debug\CommonLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\packages\Iesi.Collections.4.0.4\lib\net461\Iesi.Collections.dll</HintPath>
     </Reference>
@@ -52,6 +56,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
@@ -72,15 +77,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\Car.cs" />
-    <Compile Include="Model\CarType.cs" />
-    <Compile Include="Model\CarTypeModel.cs" />
-    <Compile Include="NHibernate\NHibernateHelper.cs" />
+    <Compile Include="Connected Services\RepService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\CarTypeViewModel.cs" />
-    <Compile Include="Model\IIntegerKey.cs" />
     <Compile Include="ViewModel\CarViewModel.cs" />
-    <Compile Include="ViewModel\Repositories\BaseRepository.cs" />
-    <Compile Include="ViewModel\Repositories\CachedRepositary.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\ActionViewModel.cs" />
     <Page Include="Resources\Dictionary.xaml">
@@ -119,6 +122,16 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Connected Services\RepService\item.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\RepService\item1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\RepService\item2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\RepService\RepositoryService.wsdl" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -137,8 +150,25 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="NHibernate\Car.hbm.xml" />
-    <EmbeddedResource Include="NHibernate\CarTypeModel.hbm.xml" />
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\RepService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\RepService\item.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\RepService\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\RepService\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\RepService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

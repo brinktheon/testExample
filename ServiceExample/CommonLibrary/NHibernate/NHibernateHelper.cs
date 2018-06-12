@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoProjectWPF.NHibernate
+namespace CommonLibrary.NHibernate
 {
-    class NHibernateHelper
+    public class NHibernateHelper
     {
         private static ISessionFactory sessionFactory;
 

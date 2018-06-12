@@ -1,18 +1,21 @@
-﻿using AutoProjectWPF.Model;
-using AutoProjectWPF.ViewModel.Repositories;
-using Model;
-using System;
+﻿using CommonLibrary.Repositories;
+using CommonLibrary.Model;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using AutoProjectWPF.RepService;
+using System.ServiceModel;
+using ServiceExample;
+using System;
 
 namespace AutoProjectWPF.ViewModel
 {
     class MainViewModel : BaseViewModel
     {
+        RepositoryServiceClient client = new RepositoryServiceClient("NetTcpBinding_IRepositoryService");
         CachedRepositary<Car> CarRepo = new CachedRepositary<Car>();
         //Сделано для того, что бы записи напрямую считывались из БД, а не брались из кэша
         BaseRepository<Car> LoadingRecordsRepo = new BaseRepository<Car>();
@@ -143,7 +146,14 @@ namespace AutoProjectWPF.ViewModel
                         {
                             SelectedCar.Type = SelectedType.Type;
                             CarCollection.Add(SelectedCar);
-                            CarRepo.Save(SelectedCar.ReturnCar());
+                            try
+                            {
+                                client.Save(SelectedCar.ReturnCar());
+                            }
+                            catch (FaultException error)
+                            {
+                                MessageBox.Show(error.Message);
+                            }
                         }
                     }));
             }

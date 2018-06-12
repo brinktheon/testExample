@@ -8,7 +8,7 @@ namespace AutoProjectWPF.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void OnPropertyChange([CallerMemberName] string property="")
+        public void OnPropertyChange([CallerMemberName] string property = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }

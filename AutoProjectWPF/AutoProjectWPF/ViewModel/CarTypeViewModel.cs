@@ -1,5 +1,4 @@
-﻿using AutoProjectWPF.Model;
-using Model;
+﻿using CommonLibrary.Model;
 
 namespace AutoProjectWPF.ViewModel
 {

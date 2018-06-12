@@ -1,13 +1,14 @@
-﻿using AutoProjectWPF.NHibernate;
-using NHibernate;
+﻿using CommonLibrary.NHibernate;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace AutoProjectWPF.ViewModel.Repositories
+namespace CommonLibrary.Repositories
 {
-    class BaseRepository<T> where T : new()
+    public class BaseRepository<T> where T : new()
     {
         public BaseRepository() { }
 

@@ -1,9 +1,9 @@
 using System;
 using System.Data.SqlClient;
 
-namespace Model
+namespace CommonLibrary.Model
 {
-    class Car : IIntegerKey
+    public class Car : IIntegerKey
     {
         public virtual string Model { get; set; }
 

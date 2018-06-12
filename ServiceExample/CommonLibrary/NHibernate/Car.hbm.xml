@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
-                   assembly="AutoProjectWPF"
-                   namespace="Model">
+                   assembly="CommonLibrary"
+                   namespace="CommonLibrary.Model">
 
   <class name="Car" table="AutoConfig">
     <id name="Id" column="Id">

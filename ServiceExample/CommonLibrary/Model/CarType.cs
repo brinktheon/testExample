@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model
+namespace CommonLibrary.Model
 {
-    enum CarType
+    public enum CarType
     {
         Car = 1,
         PassengerCar = 2,
