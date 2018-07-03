@@ -13,13 +13,20 @@ namespace ServiceExample
 {
     public class ErrorHandlerBehavior : IServiceBehavior
     {
+        private Type handlerType;
+
+        public ErrorHandlerBehavior(Type handlerType)
+        {
+            this.handlerType = handlerType;
+        }
+
         public void AddBindingParameters(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase, Collection<ServiceEndpoint> endpoints, BindingParameterCollection bindingParameters)
         { 
         }
 
         public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
         {
-            var handler = new ErrorHandler();
+            var handler = (IErrorHandler)Activator.CreateInstance(handlerType);
 
             foreach (var item in serviceHostBase.ChannelDispatchers)
             {

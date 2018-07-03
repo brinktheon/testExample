@@ -13,6 +13,5 @@ namespace AutoProjectWPF
         {
             InitializeComponent();     
         }
-
     }
 }

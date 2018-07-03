@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="ErrorsHandlers\ErrorHandler.cs" />
     <Compile Include="ErrorsHandlers\ErrorHandlerBehavior.cs" />
+    <Compile Include="ErrorsHandlers\ErrorHandlerConfigElement.cs" />
     <Compile Include="Model\Car.cs" />
     <Compile Include="Model\CarType.cs" />
     <Compile Include="Model\CarTypeModel.cs" />
