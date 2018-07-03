@@ -14,5 +14,23 @@ namespace ServiceExample
     {
         [OperationContract]
         void Save(Car obj);
+
+        [OperationContract]
+        void Remove(Car obj);
+
+        [OperationContract]
+        void Update(Car obj);
+
+        [OperationContract]
+        Car GetByKey(int id);
+
+        [OperationContract]
+        Car StartCarEdit(int id);
+
+        [OperationContract]
+        Car SetCarValue(string name, object value);
+
+        [OperationContract]
+        Car CancelEdit(int id);
     }
 }

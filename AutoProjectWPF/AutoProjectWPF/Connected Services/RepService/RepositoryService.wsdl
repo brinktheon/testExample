@@ -42,10 +42,70 @@
   <wsdl:message name="IRepositoryService_Save_OutputMessage">
     <wsdl:part name="parameters" element="tns:SaveResponse" />
   </wsdl:message>
+  <wsdl:message name="IRepositoryService_Remove_InputMessage">
+    <wsdl:part name="parameters" element="tns:Remove" />
+  </wsdl:message>
+  <wsdl:message name="IRepositoryService_Remove_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RemoveResponse" />
+  </wsdl:message>
+  <wsdl:message name="IRepositoryService_Update_InputMessage">
+    <wsdl:part name="parameters" element="tns:Update" />
+  </wsdl:message>
+  <wsdl:message name="IRepositoryService_Update_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="IRepositoryService_GetByKey_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetByKey" />
+  </wsdl:message>
+  <wsdl:message name="IRepositoryService_GetByKey_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetByKeyResponse" />
+  </wsdl:message>
+  <wsdl:message name="IRepositoryService_StartCarEdit_InputMessage">
+    <wsdl:part name="parameters" element="tns:StartCarEdit" />
+  </wsdl:message>
+  <wsdl:message name="IRepositoryService_StartCarEdit_OutputMessage">
+    <wsdl:part name="parameters" element="tns:StartCarEditResponse" />
+  </wsdl:message>
+  <wsdl:message name="IRepositoryService_SetCarValue_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetCarValue" />
+  </wsdl:message>
+  <wsdl:message name="IRepositoryService_SetCarValue_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetCarValueResponse" />
+  </wsdl:message>
+  <wsdl:message name="IRepositoryService_CancelEdit_InputMessage">
+    <wsdl:part name="parameters" element="tns:CancelEdit" />
+  </wsdl:message>
+  <wsdl:message name="IRepositoryService_CancelEdit_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CancelEditResponse" />
+  </wsdl:message>
   <wsdl:portType name="IRepositoryService">
     <wsdl:operation name="Save">
       <wsdl:input wsaw:Action="http://tempuri.org/IRepositoryService/Save" message="tns:IRepositoryService_Save_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IRepositoryService/SaveResponse" message="tns:IRepositoryService_Save_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Remove">
+      <wsdl:input wsaw:Action="http://tempuri.org/IRepositoryService/Remove" message="tns:IRepositoryService_Remove_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IRepositoryService/RemoveResponse" message="tns:IRepositoryService_Remove_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Update">
+      <wsdl:input wsaw:Action="http://tempuri.org/IRepositoryService/Update" message="tns:IRepositoryService_Update_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IRepositoryService/UpdateResponse" message="tns:IRepositoryService_Update_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetByKey">
+      <wsdl:input wsaw:Action="http://tempuri.org/IRepositoryService/GetByKey" message="tns:IRepositoryService_GetByKey_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IRepositoryService/GetByKeyResponse" message="tns:IRepositoryService_GetByKey_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="StartCarEdit">
+      <wsdl:input wsaw:Action="http://tempuri.org/IRepositoryService/StartCarEdit" message="tns:IRepositoryService_StartCarEdit_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IRepositoryService/StartCarEditResponse" message="tns:IRepositoryService_StartCarEdit_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SetCarValue">
+      <wsdl:input wsaw:Action="http://tempuri.org/IRepositoryService/SetCarValue" message="tns:IRepositoryService_SetCarValue_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IRepositoryService/SetCarValueResponse" message="tns:IRepositoryService_SetCarValue_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CancelEdit">
+      <wsdl:input wsaw:Action="http://tempuri.org/IRepositoryService/CancelEdit" message="tns:IRepositoryService_CancelEdit_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IRepositoryService/CancelEditResponse" message="tns:IRepositoryService_CancelEdit_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="NetTcpBinding_IRepositoryService" type="tns:IRepositoryService">
@@ -60,6 +120,60 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="Remove">
+      <soap12:operation soapAction="http://tempuri.org/IRepositoryService/Remove" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Update">
+      <soap12:operation soapAction="http://tempuri.org/IRepositoryService/Update" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetByKey">
+      <soap12:operation soapAction="http://tempuri.org/IRepositoryService/GetByKey" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="StartCarEdit">
+      <soap12:operation soapAction="http://tempuri.org/IRepositoryService/StartCarEdit" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetCarValue">
+      <soap12:operation soapAction="http://tempuri.org/IRepositoryService/SetCarValue" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CancelEdit">
+      <soap12:operation soapAction="http://tempuri.org/IRepositoryService/CancelEdit" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="RepositoryService">
     <wsdl:port name="NetTcpBinding_IRepositoryService" binding="tns:NetTcpBinding_IRepositoryService">
@@ -67,7 +181,7 @@
       <wsa10:EndpointReference>
         <wsa10:Address>net.tcp://localhost:56562/RepositoryService</wsa10:Address>
         <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
-          <Upn>DESKTOP-H5T5H96\andre</Upn>
+          <Upn>Chris-PC\Chris</Upn>
         </Identity>
       </wsa10:EndpointReference>
     </wsdl:port>

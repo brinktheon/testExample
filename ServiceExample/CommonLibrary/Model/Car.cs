@@ -21,8 +21,15 @@ namespace CommonLibrary.Model
 
         public override bool Equals(object obj)
         {
-            return obj is Car car &&
-                   Id == car.Id;
+            var car = obj as Car;
+            return car != null &&
+                   Model == car.Model &&
+                   Type == car.Type &&
+                   Id == car.Id &&
+                   Seating == car.Seating &&
+                   MaxSpeed == car.MaxSpeed &&
+                   LiftingWeight == car.LiftingWeight &&
+                   MaxWeight == car.MaxWeight;
         }
 
         public override int GetHashCode()

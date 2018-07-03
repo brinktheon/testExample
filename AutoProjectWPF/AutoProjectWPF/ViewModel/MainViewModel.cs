@@ -8,8 +8,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using AutoProjectWPF.RepService;
 using System.ServiceModel;
-using ServiceExample;
 using System;
+using System.Reflection;
+using System.ComponentModel;
 
 namespace AutoProjectWPF.ViewModel
 {
@@ -20,6 +21,10 @@ namespace AutoProjectWPF.ViewModel
         //Сделано для того, что бы записи напрямую считывались из БД, а не брались из кэша
         BaseRepository<Car> LoadingRecordsRepo = new BaseRepository<Car>();
         BaseRepository<CarTypeModel> CarTypeRepo = new BaseRepository<CarTypeModel>();
+
+        // Предыдущий объект, для проверки для проверки на сохранение.
+        private CarViewModel previewsCar;
+
 
         public IEnumerable<string> ComboListColor { get { return typeof(Colors).GetProperties().Select(x => x.Name); } }
 
@@ -85,6 +90,8 @@ namespace AutoProjectWPF.ViewModel
             CarCollection = new ObservableCollection<CarViewModel>(CarRepo.Load().Select(car => new CarViewModel(car)));
             typesOfCar = new ObservableCollection<CarTypeViewModel>(CarTypeRepo.Load().Select(carModel => new CarTypeViewModel(carModel)));
 
+            Application.Current.MainWindow.Closing += new CancelEventHandler(MainWindow_Closing);
+
             ListOfActions = new ObservableCollection<ICommand>()
             {
                 CreateEmptyItem,
@@ -94,13 +101,87 @@ namespace AutoProjectWPF.ViewModel
             };
         }
 
+        /// <summary>
+        /// Событие для закртия окна
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            ChangeConfirmation();
+        }
+
+        /// <summary>
+        /// Метод проверяет сохранены ли изменения в объекте
+        /// Проверяет пустой ли предыдущий объект
+        /// Загружает в сессию на изменения
+        /// Проверяет поля двух объектов
+        /// Если они не равны(объект изменен), то проходится по полям и устанавливает значения.
+        /// После, если объект не сохранен, то запрашивет у пользователя Сохранить или Не сохранять объект.
+        /// </summary>
+        private void ChangeConfirmation()
+        {
+            if (previewsCar != null)
+            {
+                try
+                {
+                    var editorObject = new CarViewModel(client.StartCarEdit(previewsCar.Id));
+
+                    if (!(editorObject.ReturnCar()).Equals(previewsCar.ReturnCar()))
+                    {
+                        int indexOfPreviewsCarInList = CarCollection.IndexOf(previewsCar);
+                        int IdPreviewsCar = previewsCar.Id;
+                        foreach (PropertyInfo info in editorObject.ReturnCar().GetType().GetProperties())
+                        {
+                            if (!info.GetValue(editorObject.ReturnCar()).Equals(info.GetValue(previewsCar.ReturnCar())))
+                            {
+                                if (info.GetValue(previewsCar.ReturnCar()).Equals(""))
+                                {
+                                    MessageBox.Show("Поле должно быть заполнено");
+                                    previewsCar = null;
+                                    carCollection[indexOfPreviewsCarInList] = new CarViewModel(client.CancelEdit(IdPreviewsCar));
+                                    return;
+                                }
+                                else
+                                {
+                                    editorObject = new CarViewModel(client.SetCarValue(info.Name, info.GetValue(previewsCar.ReturnCar())));
+                                }
+                            }
+                        }
+                        previewsCar = null;
+
+                        MessageBoxResult messageBox = MessageBox.Show("Сохранить внесенные имзенения ?", "Caption", MessageBoxButton.YesNo);
+                        if (messageBox == MessageBoxResult.Yes)
+                        {
+                            client.Update(CarCollection[indexOfPreviewsCarInList].ReturnCar());
+                            CarCollection[indexOfPreviewsCarInList] = editorObject;
+                            MessageBox.Show("Изменения успешно сохранены");
+                        }
+                        if (messageBox == MessageBoxResult.No)
+                        {
+                            carCollection[indexOfPreviewsCarInList] = new CarViewModel(client.CancelEdit(IdPreviewsCar));
+                            MessageBox.Show("Изменения отменены");
+                        }
+                    }
+                } 
+                catch (Exception e)
+                {
+                    MessageBox.Show($"В ходе работы возникла ошибка {e.Message}\nДанные восстановлены");
+                    CarCollection[CarCollection.IndexOf(previewsCar)] = new CarViewModel(client.CancelEdit(previewsCar.Id));
+                }
+            }
+        }
+
+
         private CarViewModel selectedCar;
         public CarViewModel SelectedCar
         {
             get { return selectedCar; }
             set
             {
+                ChangeConfirmation();
                 selectedCar = value;
+                previewsCar = SelectedCar;
                 OnPropertyChange();
             }
         }
@@ -140,7 +221,7 @@ namespace AutoProjectWPF.ViewModel
                     {
                         if (CarCollection.Contains(SelectedCar))
                         {
-                            CarRepo.Update(SelectedCar.ReturnCar());
+                            client.Update(SelectedCar.ReturnCar());
                         }
                         else
                         {
@@ -170,7 +251,7 @@ namespace AutoProjectWPF.ViewModel
                     (removeItem = new ActionViewModel("Remove\nRecord",
                     obj =>
                     {
-                        CarRepo.Remove(selectedCar.ReturnCar());
+                        client.Remove(selectedCar.ReturnCar());
                         CarCollection.Remove(selectedCar);
                         SelectedCar = CarCollection.FirstOrDefault();
                     }));

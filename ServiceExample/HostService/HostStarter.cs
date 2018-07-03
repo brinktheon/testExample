@@ -14,7 +14,6 @@ namespace HostService
         {
             using (var host = new ServiceHost(typeof(ServiceExample.RepositoryService)))
             {
-                host.Description.Behaviors.Add(new ErrorHandlerBehavior());
                 host.Open();
                 Console.WriteLine("Host started ...");
                 Console.ReadKey();
